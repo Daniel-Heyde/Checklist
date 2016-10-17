@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Checklist</string>
+    <string name="Add_New_Task">Add New Task</string>
+    <string name="Clear_Progress">Clear Current Progress</string>
 </resources>

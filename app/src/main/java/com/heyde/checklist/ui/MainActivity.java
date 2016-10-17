@@ -2,124 +2,100 @@ package com.heyde.checklist.ui;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.support.v7.app.ActionBar;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.heyde.checklist.R;
+import com.heyde.checklist.model.Task;
 
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static android.R.drawable.checkbox_off_background;
-
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.checkButton)
-    ImageButton mCheckButton;
+    //    @BindView(R.id.checkButton)
+//    ImageButton mCheckButton;
     @BindView(R.id.refreshButton)
     Button mRefreshButton;
     @BindView(R.id.addButton)
     ImageButton mAddButton;
     @BindView(R.id.taskTable)
     TableLayout mTaskTable;
-    @BindView(R.id.sampleTask)
-    TextView mSampleTask;
+    @BindView(R.id.referenceTask)
+    TextView mReferenceText;
+    @BindView(R.id.referenceButton)
+    ImageButton mReferenceButton;
 
-
-    private String mNewText = "";
-    private Boolean mThinking;
+    private List<Task> taskList = new ArrayList<>();
     private Context mContext;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        mContext = this.getApplicationContext();
-
-        mCheckButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        mContext = this;
+        //TODO future save, editlist menu, delete list elements, delete list, list names
 
         mRefreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                refreshTasks();
             }
         });
-
         mAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addTask();
             }
         });
+
     }
 
-    private void addTask() {
-        getTaskFromUser();
-
-        Log.i("STATUS", "VIEW ADDED, VALUE" + mNewText);
-    }
-
-    private void makeNewLine() {
-        TableRow newTaskRow = new TableRow(this);
-        ViewGroup.LayoutParams tableParams = mTaskTable.getLayoutParams();
-        newTaskRow.setLayoutParams(tableParams);
-
-        ImageButton newCheckButton = new ImageButton(this);
-        ViewGroup.LayoutParams buttonParams = mCheckButton.getLayoutParams();
-        newCheckButton.setLayoutParams(buttonParams);
-        Drawable drawable;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            drawable = getDrawable(checkbox_off_background);
-        } else {
-            drawable = getResources().getDrawable(checkbox_off_background);
+    private void refreshTasks() {
+        for (Task task : taskList) {
+            if (task.isChecked()) {
+                task.toggleCheckButton();
+            }
         }
-        newCheckButton.setImageDrawable(drawable);
+    }
 
-        TextView newTask = new TextView(this);
-        ViewGroup.LayoutParams textParams = mSampleTask.getLayoutParams();
-        newTask.setLayoutParams(textParams);
-        newTask.setText(mNewText);
+    private void makeNewLine(final Task newTaskObject) {
+        TableRow newTaskRow = new TableRow(this);
+        newTaskRow.setPadding(0, 30, 0, 0);
 
-        newTaskRow.addView(newTask);
-        newTaskRow.addView(newCheckButton);
+        // add views to new row
+        newTaskRow.addView(newTaskObject.getTextView());
+        newTaskRow.addView(newTaskObject.getCheckButton());
 
+        // add new row to table
         ViewGroup.LayoutParams oldTableParams = mTaskTable.getLayoutParams();
         mTaskTable.addView(newTaskRow, new TableLayout.LayoutParams(oldTableParams));
     }
 
 
-    private void getTaskFromUser() {
-
+    private void addTask() {
 
                 // http://stackoverflow.com/questions/10903754/input-text-dialog-android
-                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("New Task");
 
-                final EditText input = new EditText(mContext);
+        final EditText input = new EditText(this);
                 // specify input type
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 builder.setView(input); // takes builder, tells it to show the edittext that we're now editing
@@ -127,8 +103,10 @@ public class MainActivity extends AppCompatActivity {
                 builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mNewText = input.getText().toString();// FIXME moves on without waiting for user to finish
-                        makeNewLine();
+                        String newText = input.getText().toString();
+                        Task newTask = new Task(newText, false, mContext, mReferenceText, mReferenceButton);
+                        taskList.add(newTask);
+                        makeNewLine(newTask);
                     }
                 });
 
@@ -138,6 +116,9 @@ public class MainActivity extends AppCompatActivity {
                         dialog.cancel();// closes pop up dialog without input
                     }
                 });
+
+        builder.show();
+
              }
 
 
