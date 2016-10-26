@@ -6,7 +6,6 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -22,7 +21,6 @@ public class Task {
     private String mTaskText;
     private boolean mIsChecked;
     private Context mContext;
-
     private TextView mTextView;
     private ImageButton mCheckButton;
 
@@ -41,8 +39,7 @@ public class Task {
 
     private void createImageButton(ImageButton referenceImageButton) {
         final ImageButton newCheckButton = new ImageButton(mContext);
-        ViewGroup.LayoutParams buttonParams = referenceImageButton.getLayoutParams();
-        newCheckButton.setLayoutParams(buttonParams);
+        newCheckButton.setLayoutParams(referenceImageButton.getLayoutParams());
         Drawable initCheckbox;
         if (Build.VERSION.SDK_INT >= 21) {
             initCheckbox = mContext.getDrawable(checkbox_off_background);
@@ -92,8 +89,7 @@ public class Task {
     private void createTextView(TextView referenceTextView) {
 
         TextView newTaskText = new TextView(mContext);
-        ViewGroup.LayoutParams textParams = referenceTextView.getLayoutParams();
-        newTaskText.setLayoutParams(textParams);
+        newTaskText.setLayoutParams(referenceTextView.getLayoutParams());
         newTaskText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         newTaskText.setText(mTaskText);
         mTextView = newTaskText;
