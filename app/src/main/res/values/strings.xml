@@ -2,5 +2,7 @@
     <string name="app_name">Checklist</string>
     <string name="Add_New_Task">Add New Task</string>
     <string name="Clear_Progress">Clear Current Progress</string>
-    <string name="My_Lists">My Lists</string>
+    <string name="My_Lists">My Lists:\n</string>
+    <string name="Add_List">Add List:\n</string>
+    <string name="Edit_List">Edit List:\n</string>
 </resources>

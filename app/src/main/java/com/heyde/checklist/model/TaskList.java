@@ -6,6 +6,7 @@ import android.widget.TableRow;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Daniel on 10/17/2016.
@@ -17,15 +18,18 @@ public class TaskList {
     private TableLayout mTaskTable;
     private List<TableRow> mTableRows;
     private String mName;
+    private boolean mDeleting = false;
+
 
     public TaskList(Context context, TableLayout referenceTable) {
+        Random rand = new Random();
         mTasks = new ArrayList<>();
         mTableRows = new ArrayList<>();
         mContext = context;
         mTaskTable = new TableLayout(mContext);
+        mName = "temp";
         createTable(referenceTable);
-        mName = "tempname";
-        //TODO name of list, prevent too many tasks
+        //TODO prevent too many tasks
     }
 
     private void createTable(TableLayout referenceTable) {
@@ -50,7 +54,19 @@ public class TaskList {
             if (task.isChecked()) {
                 task.toggleCheckButton();
             }
+        }
+    }
 
+    public void clearList() {
+        mTableRows.clear();
+        mTasks.clear();
+    }
+
+    public void checkForRemoval() {
+        for (int i = 0; i < mTasks.size(); i++) {
+            if (mTasks.get(i).isFlaggedForDeletion()) {
+                mTasks.remove(i);
+            }
         }
     }
 
@@ -68,9 +84,7 @@ public class TaskList {
         mTableRows.add(newTaskRow);
     }
 
-    private void toggleVisible() {
 
-    }
 
     public List<Task> getTasks() {
         return mTasks;
@@ -79,4 +93,5 @@ public class TaskList {
     public void addTask(Task task) {
         mTasks.add(task);
     }
+
 }
