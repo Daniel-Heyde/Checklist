@@ -1,6 +1,5 @@
 package com.heyde.checklist.model;
 
-import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
 
@@ -10,7 +9,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +28,7 @@ public class FileController{ //TODO set this up to run in background thread
 
     public void saveList(TaskList list) {
         File directory = new File(mContext.getFilesDir()+File.separator+"lists"); // list files will be stored in data/data/com.heyde.checklist/files/lists
-        File textFile = new File(directory+File.separator+list.getName()+".txt"); //TODO do I need to specify .txt?
+        File textFile = new File(directory + File.separator + list.getName() + ".txt");
         try {
 
             directory.mkdirs();
@@ -53,7 +51,7 @@ public class FileController{ //TODO set this up to run in background thread
 
     }
 
-    public List<String> loadFile(String fileName){
+    public List<String> loadFile(String fileName) {//FIXME loading temp???????????????????????
         File file = new File(mContext.getFilesDir()+File.separator + "lists" + File.separator + fileName + ".txt");
         List list = new ArrayList();
         try {

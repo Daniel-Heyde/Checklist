@@ -15,8 +15,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -37,7 +37,6 @@ import butterknife.ButterKnife;
 
 import static android.R.drawable.ic_menu_add;
 import static android.R.drawable.ic_menu_delete;
-import static android.R.drawable.ic_menu_edit;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -79,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         mWorkingList = new TaskList(this, mTaskTable);
         mFileController = new FileController(this);
         // TODO editlist menu, delete list elements, delete list
-        // TODO Pencil? Edit, FOR THIS USE CONTEXTUAL ACTION MODE
+        // TODO EDIT: change textviews to edittexts while edit is true
         // todo Trash Can? Delete list items/ delete list(if in list activity) use snackbar to show deleted
         // where to create new tasklist?
         // TODO save onpause and onclose
@@ -144,6 +143,8 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialog alertDialog = builder.create();
 
+        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
         alertDialog.show();
 
         Button posButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
@@ -187,6 +188,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         AlertDialog alertDialog = builder.create();
+
+        alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
         alertDialog.show();
 
@@ -244,11 +247,11 @@ public class MainActivity extends AppCompatActivity {
 
                             Task newTask = new Task(taskName, isChecked, mContext, mReferenceText, mReferenceButton);
 
-                            newList.setName(itemName);
                             newList.addTask(newTask);
                             newList.makeNewLine(newTask);
-
                         }
+
+                        newList.setName(itemName);
                         mWorkingList = newList;
                         mTitleText.setText(mWorkingList.getName());
                         displayTable(mWorkingList);
@@ -287,11 +290,7 @@ public class MainActivity extends AppCompatActivity {
             for (Task task : mWorkingList.getTasks()) {
                 task.prepForDelete();
             }
-            if (Build.VERSION.SDK_INT >= 21) {
-                actionIcon = mContext.getDrawable(ic_menu_delete);
-            }else {
-                actionIcon = mContext.getResources().getDrawable(ic_menu_delete);
-            }
+            actionIcon = fetchADrawable(ic_menu_delete);
         } else { // restore things to normal state
             mRefreshButton.setVisibility(View.VISIBLE);
             mTasksEditable = false;
@@ -299,14 +298,20 @@ public class MainActivity extends AppCompatActivity {
             for (Task task : mWorkingList.getTasks()) {
                 task.restoreCheckButton();
             }
-            if (Build.VERSION.SDK_INT >= 21) {
-                actionIcon = mContext.getDrawable(ic_menu_add);
-            }else {
-                actionIcon = mContext.getResources().getDrawable(ic_menu_add);
-            }
+            actionIcon = fetchADrawable(ic_menu_add);
         }
         editIcon.setIcon(actionIcon);
         displayTable(mWorkingList);// not deleting deleted list items
+    }
+
+    private Drawable fetchADrawable(int name) {
+        Drawable drbl;
+        if (Build.VERSION.SDK_INT >= 21) {
+            drbl = mContext.getDrawable(name);
+        } else { // for older devices
+            drbl = mContext.getResources().getDrawable(name);
+        }
+        return drbl;
     }
 
 }

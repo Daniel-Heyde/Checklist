@@ -50,19 +50,11 @@ public class Task {
         final ImageButton newCheckButton = new ImageButton(mContext);
         newCheckButton.setLayoutParams(referenceImageButton.getLayoutParams());
         Drawable checkbox;
-        if (Build.VERSION.SDK_INT >= 21) {
             if (!isChecked()) {
-                checkbox = mContext.getDrawable(checkbox_off_background);
+                checkbox = fetchADrawable(checkbox_off_background);
             } else {
-                checkbox = mContext.getDrawable(checkbox_on_background);
+                checkbox = fetchADrawable(checkbox_on_background);
             }
-        } else { // for older devices
-            if (!isChecked()) {
-                checkbox = mContext.getResources().getDrawable(checkbox_off_background);
-            } else {
-                checkbox = mContext.getResources().getDrawable(checkbox_on_background);
-            }
-        }
         newCheckButton.setImageDrawable(checkbox);
         newCheckButton.setPadding(0, 2, 0, 0);// initial one had to be padded 2dp, so these will follow to make it uniform
         int color;
@@ -72,21 +64,18 @@ public class Task {
             color = mContext.getResources().getColor(transparent);
         }
         newCheckButton.setBackgroundColor(color);
+        newCheckButton.setTag("noDelete");
 
         newCheckButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mIsDeletable) {
                     mFlaggedForDeletion = true;
-                    Drawable delete;
-                    if (Build.VERSION.SDK_INT >= 21) {
-                        delete = mContext.getDrawable(ic_delete);
-                    } else { // for older devices
-                        delete = mContext.getResources().getDrawable(ic_delete);
-                    }
+                    Drawable delete = fetchADrawable(ic_delete);
                     mCheckButton.setImageDrawable(delete);
+                    mCheckButton.setTag("delete");
                 } else {
-                    toggleCheckButton();
+                    toggleCheckButton();//todo use tags instead of boolean flags?
                 }
             }
         });
@@ -94,22 +83,24 @@ public class Task {
         mCheckButton = newCheckButton;
     }
 
+    private Drawable fetchADrawable(int name) {
+        Drawable drbl;
+        if (Build.VERSION.SDK_INT >= 21) {
+            drbl = mContext.getDrawable(name);
+        } else { // for older devices
+            drbl = mContext.getResources().getDrawable(name);
+        }
+        return drbl;
+    }
+
     public void restoreCheckButton() {
 
         Drawable checkbox;
-        if (Build.VERSION.SDK_INT >= 21) {
             if (!isChecked()) {
-                checkbox = mContext.getDrawable(checkbox_off_background);
+                checkbox = fetchADrawable(checkbox_off_background);
             } else {
-                checkbox = mContext.getDrawable(checkbox_on_background);
+                checkbox = fetchADrawable(checkbox_on_background);
             }
-        } else { // for older devices
-            if (!isChecked()) {
-                checkbox = mContext.getResources().getDrawable(checkbox_off_background);
-            } else {
-                checkbox = mContext.getResources().getDrawable(checkbox_on_background);
-            }
-        }
         mIsDeletable = false;
         mCheckButton.setImageDrawable(checkbox);
     }
@@ -117,22 +108,10 @@ public class Task {
     public void toggleCheckButton() {
 
         Drawable checkbox;
-        if (Build.VERSION.SDK_INT >= 21) {
-            if (!isChecked()) {
-                checkbox = mContext.getDrawable(checkbox_on_background);
-                setChecked(true);
-            } else {
-                checkbox = mContext.getDrawable(checkbox_off_background);
-                setChecked(false);
-            }
-        } else { // for older devices
-            if (!isChecked()) {
-                checkbox = mContext.getResources().getDrawable(checkbox_on_background);
-                setChecked(true);
-            } else {
-                checkbox = mContext.getResources().getDrawable(checkbox_off_background);
-                setChecked(false);
-            }
+        if (!isChecked()) {
+            checkbox = fetchADrawable(checkbox_on_background);
+        } else {
+            checkbox = fetchADrawable(checkbox_off_background);
         }
         mCheckButton.setImageDrawable(checkbox);
     }

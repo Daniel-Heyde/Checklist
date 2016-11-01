@@ -1,12 +1,12 @@
 package com.heyde.checklist.model;
 
 import android.content.Context;
+import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by Daniel on 10/17/2016.
@@ -18,11 +18,9 @@ public class TaskList {
     private TableLayout mTaskTable;
     private List<TableRow> mTableRows;
     private String mName;
-    private boolean mDeleting = false;
 
 
     public TaskList(Context context, TableLayout referenceTable) {
-        Random rand = new Random();
         mTasks = new ArrayList<>();
         mTableRows = new ArrayList<>();
         mContext = context;
@@ -57,15 +55,19 @@ public class TaskList {
         }
     }
 
-    public void clearList() {
-        mTableRows.clear();
-        mTasks.clear();
-    }
-
     public void checkForRemoval() {
+
         for (int i = 0; i < mTasks.size(); i++) {
             if (mTasks.get(i).isFlaggedForDeletion()) {
-                mTasks.remove(i);
+                for (int rowInd = 0; rowInd < mTableRows.size(); rowInd++) {
+                    TableRow row = mTableRows.get(rowInd);
+                    ImageButton rowImage = (ImageButton) row.getChildAt(1);
+                    if (rowImage.getTag().equals("delete")) {
+                        mTaskTable.removeView(row);
+                        mTableRows.remove(row);
+                        mTasks.remove(i);
+                    }
+                }
             }
         }
     }
