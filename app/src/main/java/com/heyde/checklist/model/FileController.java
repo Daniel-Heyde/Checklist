@@ -27,28 +27,29 @@ public class FileController{ //TODO set this up to run in background thread
     }
 
     public void saveList(TaskList list) {
-        File directory = new File(mContext.getFilesDir()+File.separator+"lists"); // list files will be stored in data/data/com.heyde.checklist/files/lists
-        File textFile = new File(directory + File.separator + list.getName() + ".txt");
-        try {
+        if (!(!list.getNameChanged() && list.getTasks().size() == 0)) { // if name hasnt been changed and list is empty, don't save
 
-            directory.mkdirs();
-            textFile.createNewFile();
-
-            mFileWriter = new FileWriter(textFile);
-            for (Task task : list.getTasks()){
-                mFileWriter.write(task.getTaskText() + ":::" + task.isChecked()+"\n");
-                Log.i("WRITING", task.getTaskText() + ":::" + task.isChecked());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally{
+            File directory = new File(mContext.getFilesDir() + File.separator + "lists"); // list files will be stored in data/data/com.heyde.checklist/files/lists
+            File textFile = new File(directory + File.separator + list.getName() + ".txt");
             try {
-                mFileWriter.close();
+
+                textFile.createNewFile();
+
+                mFileWriter = new FileWriter(textFile);
+                for (Task task : list.getTasks()) {
+                    mFileWriter.write(task.getTaskText() + ":::" + task.isChecked() + "\n");
+                    Log.i("WRITING", task.getTaskText() + ":::" + task.isChecked());
+                }
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                try {
+                    mFileWriter.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
-
     }
 
     public List<String> loadFile(String fileName) {//FIXME loading temp???????????????????????
@@ -71,17 +72,25 @@ public class FileController{ //TODO set this up to run in background thread
     }
 
     public List<String> getAvailableFiles(){
-        File dir = new File(mContext.getFilesDir()+File.separator + "lists");
+        File dir = new File(mContext.getFilesDir() + File.separator + "lists");
+        dir.mkdirs();
         File[] files = dir.listFiles();
         List<String> availableFiles = new ArrayList<>();
-        if (files!=null) {
+        if (files.length != 0) {
             for (File file : files) {
                 String filename = file.getName();
                 filename = filename.substring(0, filename.length() - 4);
                 availableFiles.add(filename);
             }
+        } else {
+            availableFiles.add("No Files :(");
         }
         return availableFiles;
+    }
+
+    public void deleteList(String filename) {
+        File forDelete = new File(mContext.getFilesDir() + File.separator + "lists" + File.separator + filename + ".txt");
+        forDelete.delete();
     }
 
 
