@@ -18,6 +18,7 @@ public class TaskList {
     private TableLayout mTaskTable;
     private List<TableRow> mTableRows;
     private String mName;
+    private Boolean mNameChanged;
 
 
     public TaskList(Context context, TableLayout referenceTable) {
@@ -25,7 +26,8 @@ public class TaskList {
         mTableRows = new ArrayList<>();
         mContext = context;
         mTaskTable = new TableLayout(mContext);
-        mName = "temp";
+        mName = "Checklist";
+        mNameChanged = false;
         createTable(referenceTable);
         //TODO prevent too many tasks
     }
@@ -39,7 +41,13 @@ public class TaskList {
         return mTableRows;
     }
 
+    public Boolean getNameChanged() {
+        return mNameChanged;
+    }
+
     public void setName(String name) {
+
+        mNameChanged = true;
         mName = name;
     }
 

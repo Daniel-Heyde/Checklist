@@ -75,7 +75,7 @@ public class Task {
                     mCheckButton.setImageDrawable(delete);
                     mCheckButton.setTag("delete");
                 } else {
-                    toggleCheckButton();//todo use tags instead of boolean flags?
+                    toggleCheckButton();// use tags instead of boolean flags?
                 }
             }
         });
@@ -96,7 +96,7 @@ public class Task {
     public void restoreCheckButton() {
 
         Drawable checkbox;
-            if (!isChecked()) {
+        if (!mIsChecked) {
                 checkbox = fetchADrawable(checkbox_off_background);
             } else {
                 checkbox = fetchADrawable(checkbox_on_background);
@@ -108,10 +108,12 @@ public class Task {
     public void toggleCheckButton() {
 
         Drawable checkbox;
-        if (!isChecked()) {
+        if (!mIsChecked) {
             checkbox = fetchADrawable(checkbox_on_background);
+            mIsChecked = true;
         } else {
             checkbox = fetchADrawable(checkbox_off_background);
+            mIsChecked = false;
         }
         mCheckButton.setImageDrawable(checkbox);
     }

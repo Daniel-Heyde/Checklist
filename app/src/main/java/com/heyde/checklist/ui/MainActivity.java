@@ -24,6 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.heyde.checklist.R;
 import com.heyde.checklist.model.FileController;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private TaskList mWorkingList;
     private Context mContext;
     private FileController mFileController;
+    private TaskList mPreviousList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,15 +75,12 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater layoutInflater = getLayoutInflater();
         layoutInflater.inflate(R.layout.listname_actionbar, null);
         mTitleText = (TextView) findViewById(R.id.titleEditText);
-
-
         mWorkingList = new TaskList(this, mTaskTable);
+
         mFileController = new FileController(this);
-        // TODO editlist menu, delete list elements, delete list
         // TODO EDIT: change textviews to edittexts while edit is true
-        // todo Trash Can? Delete list items/ delete list(if in list activity) use snackbar to show deleted
-        // where to create new tasklist?
-        // TODO save onpause and onclose
+        // TODO delete old list if list's name is changed
+        // TODO Alert user if save failed, ie. duplicate name
 
         mRefreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,8 +101,21 @@ public class MainActivity extends AppCompatActivity {
                 setTitle();
             }
         });
+
+        if (mFileController.getAvailableFiles().size() > 1) {
+            String initListName = mFileController.getAvailableFiles().get(0);
+            ArrayList<String> initListStrings = new ArrayList<>(mFileController.loadFile(initListName));
+            mPreviousList = fileToList(initListStrings, initListName);
+            switchToPreviousList();
+        }
+
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mFileController.saveList(mWorkingList);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -220,47 +232,19 @@ public class MainActivity extends AppCompatActivity {
                 View listButtonView = findViewById(R.id.action_myLists);
 
                 PopupMenu popup = new PopupMenu(this, listButtonView);
-                for (String filename : mFileController.getAvailableFiles()){
+                for (String filename : mFileController.getAvailableFiles()) {
                     popup.getMenu().add(filename);
                 }
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        mFileController.saveList(mWorkingList); // save old list before rewriting table
-                        String itemName = item.getTitle().toString();
-                        ArrayList<String> taskList = new ArrayList<>(mFileController.loadFile(itemName));
-                        TaskList newList = new TaskList(mContext, mTaskTable);
-
-                        for(String taskText : taskList) {
-                            String[] taskProps;
-                            String taskName;
-                            boolean isChecked;
-
-                            taskProps = taskText.split(":::");
-                            if (taskProps[1].equals("false")){
-                                isChecked = false;
-                            } else {
-                                isChecked = true;
-                            }
-
-                            taskName = taskProps[0].trim();
-
-                            Task newTask = new Task(taskName, isChecked, mContext, mReferenceText, mReferenceButton);
-
-                            newList.addTask(newTask);
-                            newList.makeNewLine(newTask);
-                        }
-
-                        newList.setName(itemName);
-                        mWorkingList = newList;
-                        mTitleText.setText(mWorkingList.getName());
-                        displayTable(mWorkingList);
+                        switchToLoadedList(item);
                         return false;
                     }
                 });
                 try {
                     popup.show();
-                }catch(Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
 
                 }
@@ -272,19 +256,125 @@ public class MainActivity extends AppCompatActivity {
 
                 return true;
 
+            case R.id.add_new_list:
+                if (mTasksEditable) {
+                    confirmDelete();
+                } else {
+                    createNewList();
+                }
             default:
                 return false;
         }
     }
 
+    private void createNewList() {
+        mFileController.saveList(mWorkingList);
+        mPreviousList = mWorkingList;
+        mWorkingList = new TaskList(this, mTaskTable);
+        setTitle();
+        displayTable(mWorkingList);
+    }
+
+    private void switchToLoadedList(MenuItem item) {
+        mFileController.saveList(mWorkingList); // save old list before rewriting table
+        mPreviousList = mWorkingList;
+        String itemName = item.getTitle().toString();
+        ArrayList<String> taskList = new ArrayList<>(mFileController.loadFile(itemName));
+        TaskList newList = fileToList(taskList, itemName);
+
+        mWorkingList = newList;
+        mTitleText.setText(mWorkingList.getName());
+        displayTable(mWorkingList);
+    }
+
+    private void switchToPreviousList() { // should I set it straight to workinglist?
+        mFileController.saveList(mWorkingList); // save old list before rewriting table
+        if (mFileController.getAvailableFiles().contains(mPreviousList.getName())) {
+            ArrayList<String> taskList = new ArrayList<>(mFileController.loadFile(mPreviousList.getName()));
+            TaskList newList = fileToList(taskList, mPreviousList.getName());
+            mWorkingList = newList;
+        } else {
+            mWorkingList = new TaskList(this, mTaskTable);
+        }
+        displayTable(mWorkingList);
+        mTitleText.setText(mWorkingList.getName());
+    }
+
+    private TaskList fileToList(ArrayList<String> inputList, String name) {
+        TaskList newList = new TaskList(mContext, mTaskTable);
+
+        for (String taskText : inputList) {
+            String[] taskProps;
+            String taskName;
+            boolean isChecked;
+
+            taskProps = taskText.split(":::");
+            if (taskProps[1].equals("false")) {
+                isChecked = false;
+            } else {
+                isChecked = true;
+            }
+
+            taskName = taskProps[0].trim();
+
+            Task newTask = new Task(taskName, isChecked, mContext, mReferenceText, mReferenceButton);
+
+            newList.addTask(newTask);
+            newList.makeNewLine(newTask);
+        }
+
+        newList.setName(name);
+
+        return newList;
+    }
+
+    private void confirmDelete() {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("CONFIRM");
+        builder.setMessage("Are you sure you want to delete " + "\"" + mWorkingList.getName() + "\"?");
+
+        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String listName = mWorkingList.getName();
+                switchToPreviousList();
+                mFileController.deleteList(listName);
+                Toast toast = Toast.makeText(mContext, listName + " deleted", Toast.LENGTH_SHORT);
+                toggleEditMode();
+                dialog.dismiss();
+                toast.show(); //perhaps later, a snackbar instead of toast
+            }
+        });
+
+        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+
+        Button posButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        posButton.setTextColor(Color.GREEN);
+
+        Button negButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+        negButton.setTextColor(Color.RED);
+
+
+    }
+
     // The following is used to edit list entries and delete lists
     // Not sure if I should make this its own activity
 
-    private void toggleEditMode(){
+    private void toggleEditMode() {
         ActionMenuItemView editIcon = (ActionMenuItemView) findViewById(R.id.add_new_list);
 
         Drawable actionIcon;
-        if (!mTasksEditable){ // make things so they can be deleted
+        if (!mTasksEditable) { // make things so they can be deleted
             mRefreshButton.setVisibility(View.INVISIBLE);
             mTasksEditable = true;
             for (Task task : mWorkingList.getTasks()) {
