@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
 
         mFileController = new FileController(this);
         // TODO EDIT: change textviews to edittexts while edit is true
-        // TODO delete old list if list's name is changed
         // TODO Alert user if save failed, ie. duplicate name
 
         mRefreshButton.setOnClickListener(new View.OnClickListener() {
@@ -102,12 +101,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if (mFileController.getAvailableFiles().size() > 1) {
-            String initListName = mFileController.getAvailableFiles().get(0);
-            ArrayList<String> initListStrings = new ArrayList<>(mFileController.loadFile(initListName));
-            mPreviousList = fileToList(initListStrings, initListName);
-            switchToPreviousList();
-        }
+        displayList(0);
 
     }
 
@@ -115,6 +109,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         mFileController.saveList(mWorkingList);
+    }
+
+    private void displayList(int pos) {
+        if (mFileController.getAvailableFiles().size() > 1) {
+            String initListName = mFileController.getAvailableFiles().get(pos);
+            ArrayList<String> initListStrings = new ArrayList<>(mFileController.loadFile(initListName));
+            mPreviousList = fileToList(initListStrings, initListName);
+            switchToPreviousList();
+        }
     }
 
     @Override
@@ -140,8 +143,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String newText = input.getText().toString();
+                String prevName = mWorkingList.getName();
                 mWorkingList.setName(newText);
                 mFileController.saveList(mWorkingList);
+                mFileController.deleteList(prevName);
                 mTitleText.setText(mWorkingList.getName());
             }
         });
@@ -218,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
         for (TableRow row : taskList.getTableRows()) {
             mTaskTable.addView(row);
         }
+        mTitleText.setText(mWorkingList.getName());
     }
 
     @Override
@@ -282,7 +288,6 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<String> taskList = new ArrayList<>(mFileController.loadFile(itemName));
         TaskList newList = fileToList(taskList, itemName);
 
-        mWorkingList = newList;
         mTitleText.setText(mWorkingList.getName());
         displayTable(mWorkingList);
     }
@@ -297,7 +302,6 @@ public class MainActivity extends AppCompatActivity {
             mWorkingList = new TaskList(this, mTaskTable);
         }
         displayTable(mWorkingList);
-        mTitleText.setText(mWorkingList.getName());
     }
 
     private TaskList fileToList(ArrayList<String> inputList, String name) {
@@ -339,9 +343,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String listName = mWorkingList.getName();
-                switchToPreviousList();
+                if (mFileController.getAvailableFiles().contains(mPreviousList.getName()) && !listName.equals(mPreviousList.getName())) {
+                    switchToPreviousList();
+                } else {
+                    int num = 0;
+                    if (mFileController.getAvailableFiles().size() > 1) {
+                        while (mFileController.getAvailableFiles().get(num).equals(listName)) {
+                            num++;
+                        }
+                        displayList(num);
+                    } else {// no lists to display
+                        mWorkingList = new TaskList(mContext, mTaskTable);
+                        mWorkingList.setName("Checklist");
+                        displayTable(mWorkingList);
+                    }
+                }
                 mFileController.deleteList(listName);
-                Toast toast = Toast.makeText(mContext, listName + " deleted", Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(mContext, "\"" + listName + "\"" + " deleted", Toast.LENGTH_SHORT);
                 toggleEditMode();
                 dialog.dismiss();
                 toast.show(); //perhaps later, a snackbar instead of toast
@@ -391,7 +409,7 @@ public class MainActivity extends AppCompatActivity {
             actionIcon = fetchADrawable(ic_menu_add);
         }
         editIcon.setIcon(actionIcon);
-        displayTable(mWorkingList);// not deleting deleted list items
+        displayTable(mWorkingList);
     }
 
     private Drawable fetchADrawable(int name) {
