@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         mFileController = new FileController(this);
         // TODO EDIT: change textviews to edittexts while edit is true
         // TODO Alert user if save failed, ie. duplicate name
+        // FIXME No Files :( is clickable and acts like a list when clicked.
 
         mRefreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -223,7 +224,6 @@ public class MainActivity extends AppCompatActivity {
         for (TableRow row : taskList.getTableRows()) {
             mTaskTable.addView(row);
         }
-        mTitleText.setText(mWorkingList.getName());
     }
 
     @Override
@@ -287,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
         String itemName = item.getTitle().toString();
         ArrayList<String> taskList = new ArrayList<>(mFileController.loadFile(itemName));
         TaskList newList = fileToList(taskList, itemName);
-
+        mWorkingList = newList;
         mTitleText.setText(mWorkingList.getName());
         displayTable(mWorkingList);
     }
@@ -301,6 +301,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             mWorkingList = new TaskList(this, mTaskTable);
         }
+        mTitleText.setText(mWorkingList.getName());
         displayTable(mWorkingList);
     }
 
@@ -354,7 +355,7 @@ public class MainActivity extends AppCompatActivity {
                         displayList(num);
                     } else {// no lists to display
                         mWorkingList = new TaskList(mContext, mTaskTable);
-                        mWorkingList.setName("Checklist");
+                        mTitleText.setText(mWorkingList.getName());
                         displayTable(mWorkingList);
                     }
                 }

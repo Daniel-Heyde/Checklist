@@ -26,7 +26,7 @@ public class TaskList {
         mTableRows = new ArrayList<>();
         mContext = context;
         mTaskTable = new TableLayout(mContext);
-        mName = "Checklist";
+        mName = "New List";
         mNameChanged = false;
         createTable(referenceTable);
         //TODO prevent too many tasks
