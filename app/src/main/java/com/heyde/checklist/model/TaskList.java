@@ -2,6 +2,7 @@ package com.heyde.checklist.model;
 
 import android.content.Context;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
@@ -17,28 +18,32 @@ public class TaskList {
     private Context mContext;
     private TableLayout mTaskTable;
     private List<TableRow> mTableRows;
+    private List<LinearLayout> mLayoutRows;
     private String mName;
     private Boolean mNameChanged;
 
 
-    public TaskList(Context context, TableLayout referenceTable) {
+    public TaskList(Context context, LinearLayout referenceLayout) {
         mTasks = new ArrayList<>();
-        mTableRows = new ArrayList<>();
+        mLayoutRows = new ArrayList<>();
         mContext = context;
         mTaskTable = new TableLayout(mContext);
         mName = "New List";
         mNameChanged = false;
-        createTable(referenceTable);
         //TODO prevent too many tasks
     }
 
-    private void createTable(TableLayout referenceTable) {
-        mTaskTable.setWeightSum(10);
-        mTaskTable.setLayoutParams(referenceTable.getLayoutParams());
-    }
+//    private void createTable(TableLayout referenceTable) {
+//        mTaskTable.setWeightSum(10);
+//        mTaskTable.setLayoutParams(referenceTable.getLayoutParams());
+//    }
 
-    public List<TableRow> getTableRows() {
-        return mTableRows;
+//    public List<TableRow> getTableRows() {
+//        return mTableRows;
+//    }
+
+    public List<LinearLayout> getTableRows() {
+        return mLayoutRows;
     }
 
     public Boolean getNameChanged() {
@@ -67,12 +72,12 @@ public class TaskList {
 
         for (int i = 0; i < mTasks.size(); i++) {
             if (mTasks.get(i).isFlaggedForDeletion()) {
-                for (int rowInd = 0; rowInd < mTableRows.size(); rowInd++) {
-                    TableRow row = mTableRows.get(rowInd);
+                for (int rowInd = 0; rowInd < mLayoutRows.size(); rowInd++) {
+                    LinearLayout row = mLayoutRows.get(rowInd);
                     ImageButton rowImage = (ImageButton) row.getChildAt(1);
                     if (rowImage.getTag().equals("delete")) {
-                        mTaskTable.removeView(row);
-                        mTableRows.remove(row);
+//                        mTaskTable.removeView(row);
+                        mLayoutRows.remove(row);
                         mTasks.remove(i);
                     }
                 }
@@ -80,18 +85,90 @@ public class TaskList {
         }
     }
 
+    public Context getContext() {
+        return mContext;
+    }
+
+//    public void makeNewLine(Task newTaskObject) { //TASK TABLE VERSION
+//
+//        TableRow newTaskRow = new TableRow(mContext);
+//
+//        newTaskRow.setPadding(0, 30, 0, 0);
+//
+//        // add views to new row
+//        newTaskRow.addView(newTaskObject.getTextView());
+//        newTaskRow.addView(newTaskObject.getCheckButton());
+//        newTaskRow.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder();
+//                v.startDrag(null, shadowBuilder, v, 0);
+//                return false;
+//            }
+//        });
+//        newTaskRow.setOnDragListener(new View.OnDragListener() {
+//            @Override
+//            public boolean onDrag(View v, DragEvent event) {
+//                switch(event.getAction()){
+//                    case DragEvent.ACTION_DRAG_STARTED:
+//                        Toast toast = Toast.makeText(mContext, "DRAG STARTED", Toast.LENGTH_SHORT);
+//                        toast.show();
+//                        break;
+//                    case DragEvent.ACTION_DRAG_ENDED:
+//                        toast = Toast.makeText(mContext, "DRAG ENDED", Toast.LENGTH_SHORT);
+//                        toast.show();
+//                        break;
+//                    case DragEvent.ACTION_DRAG_ENTERED:
+//                        toast = Toast.makeText(mContext, "DRAG ENTERED", Toast.LENGTH_SHORT);
+//                        toast.show();
+//                        break;
+//                }
+//                return false;
+//            }
+//        });
+
     public void makeNewLine(Task newTaskObject) {
 
-        TableRow newTaskRow = new TableRow(mContext);
-        newTaskRow.setPadding(0, 30, 0, 0);
+        LinearLayout newLayout = new LinearLayout(mContext);
+
+        newLayout.setOrientation(LinearLayout.HORIZONTAL);
+        newLayout.setPadding(0, 30, 0, 0);
 
         // add views to new row
-        newTaskRow.addView(newTaskObject.getTextView());
-        newTaskRow.addView(newTaskObject.getCheckButton());
+        newLayout.addView(newTaskObject.getTextView());
+        newLayout.addView(newTaskObject.getCheckButton());
+//        newLayout.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder();
+//                v.startDrag(null, shadowBuilder, v, 0);
+//                return false;
+//            }
+//        });
+//        newLayout.setOnDragListener(new View.OnDragListener() {
+//            @Override
+//            public boolean onDrag(View v, DragEvent event) {
+//                switch(event.getAction()){
+//                    case DragEvent.ACTION_DRAG_STARTED:
+//                        Toast toast = Toast.makeText(mContext, "DRAG STARTED", Toast.LENGTH_SHORT);
+//                        toast.show();
+//                        break;
+//                    case DragEvent.ACTION_DRAG_ENDED:
+//                        toast = Toast.makeText(mContext, "DRAG ENDED", Toast.LENGTH_SHORT);
+//                        toast.show();
+//                        break;
+//                    case DragEvent.ACTION_DRAG_ENTERED:
+//                        toast = Toast.makeText(mContext, "DRAG ENTERED", Toast.LENGTH_SHORT);
+//                        toast.show();
+//                        break;
+//                }
+//                return false;
+//            }
+//        });
 
         // add new row to table
 //        mTaskTable.addView(newTaskRow);
-        mTableRows.add(newTaskRow);
+        mLayoutRows.add(newLayout);
     }
 
 

@@ -1,13 +1,11 @@
 package com.heyde.checklist.model;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +17,6 @@ import java.util.List;
 public class FileController{ //TODO set this up to run in background thread
 
     private Context mContext;
-    private FileWriter mFileWriter;
     private BufferedReader mBufferedReader;
 
     public FileController(Context context) {
@@ -27,33 +24,38 @@ public class FileController{ //TODO set this up to run in background thread
     }
 
     public void saveList(TaskList list) {
-        if (!(!list.getNameChanged() && list.getTasks().size() == 0)) { // if name hasnt been changed and list is empty, don't save
 
-            File directory = new File(mContext.getFilesDir() + File.separator + "lists"); // list files will be stored in data/data/com.heyde.checklist/files/lists
-            File textFile = new File(directory + File.separator + list.getName() + ".txt");
-            try {
+        SaveFile saveFile = new SaveFile(mContext);
+        saveFile.execute(list);
 
-                textFile.createNewFile();
-
-                mFileWriter = new FileWriter(textFile);
-                for (Task task : list.getTasks()) {
-                    mFileWriter.write(task.getTaskText() + ":::" + task.isChecked() + "\n");
-                    Log.i("WRITING", task.getTaskText() + ":::" + task.isChecked());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    mFileWriter.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+//        if (!(!list.getNameChanged() && list.getTasks().size() == 0)) { // if name hasnt been changed and list is empty, don't save
+//
+//            File directory = new File(mContext.getFilesDir() + File.separator + "lists"); // list files will be stored in data/data/com.heyde.checklist/files/lists
+//            File textFile = new File(directory + File.separator + list.getName() + ".txt");
+//            try {
+//
+//                textFile.createNewFile();
+//
+//                mFileWriter = new FileWriter(textFile);
+//                for (Task task : list.getTasks()) {
+//                    mFileWriter.write(task.getTaskText() + ":::" + task.isChecked() + "\n");
+//                    Log.i("WRITING", task.getTaskText() + ":::" + task.isChecked());
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            } finally {
+//                try {
+//                    mFileWriter.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
     }
 
-    public List<String> loadFile(String fileName) {//FIXME loading temp???????????????????????
-        File file = new File(mContext.getFilesDir()+File.separator + "lists" + File.separator + fileName + ".txt");
+    public List<String> loadFile(String fileName) {
+
+        File file = new File(mContext.getFilesDir() + File.separator + "lists" + File.separator + fileName + ".txt");
         List list = new ArrayList();
         try {
             mBufferedReader = new BufferedReader(new FileReader(file));
@@ -62,7 +64,7 @@ public class FileController{ //TODO set this up to run in background thread
         }
         try {
             String line;
-            while((line = mBufferedReader.readLine())!=null){
+            while ((line = mBufferedReader.readLine()) != null) {
                 list.add(line);
             }
         } catch (IOException e) {
@@ -70,6 +72,7 @@ public class FileController{ //TODO set this up to run in background thread
         }
         return list;
     }
+
 
     public List<String> getAvailableFiles(){
         File dir = new File(mContext.getFilesDir() + File.separator + "lists");

@@ -79,7 +79,7 @@ public class Task {
                 }
             }
         });
-        newCheckButton.setAdjustViewBounds(true);
+//        newCheckButton.setAdjustViewBounds(true);
         mCheckButton = newCheckButton;
     }
 
@@ -121,6 +121,7 @@ public class Task {
     private void createTextView(TextView referenceTextView) {
 
         TextView newTaskText = new TextView(mContext);
+        newTaskText.setMaxWidth(100);
         newTaskText.setLayoutParams(referenceTextView.getLayoutParams());
         newTaskText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         newTaskText.setText(mTaskText);

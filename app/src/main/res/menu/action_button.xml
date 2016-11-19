@@ -15,9 +15,9 @@
 
     <item
         android:id="@+id/action_myLists"
-        android:icon="@android:drawable/ic_menu_agenda"
         android:title="@string/My_Lists"
-        app:showAsAction="always"/>
+        app:showAsAction="always"
+        android:icon="@drawable/ic_lists"/>
 
 
 

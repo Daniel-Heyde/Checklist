@@ -13,6 +13,68 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.heyde.checklist.ui.MainActivity">
 
+    <Button
+        android:text="@string/Clear_Progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/refreshButton"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:elevation="12dp"/>
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/LinearListLayout">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/LinearListRow"
+            >
+
+            <TextView
+                android:text="Sample Task"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="9"
+                android:id="@+id/referenceTask"
+                android:fontFamily="sans-serif"
+                android:textSize="20sp"
+                />
+
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:srcCompat="@android:drawable/checkbox_off_background"
+                android:id="@+id/referenceButton"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:scaleX="1"
+                android:scaleY="1"
+                android:adjustViewBounds="false"
+                android:baselineAlignBottom="false"
+                android:layout_alignParentRight="false"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/ic_input_add"
+        android:id="@+id/addButton"
+        android:layout_weight="1"
+        android:background="@android:color/transparent"
+        android:elevation="12dp"
+        android:layout_below="@+id/LinearListLayout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="10dp"
+        android:visibility="visible"/>
+
     <TextView
         android:text="@string/Add_New_Task"
         android:layout_width="wrap_content"
@@ -23,68 +85,8 @@
         android:id="@+id/NewTaskTextView"
         android:textAllCaps="false"
         android:paddingBottom="7dp"
-        android:textSize="16sp"/>
-
-    <Button
-        android:text="@string/Clear_Progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/refreshButton"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:elevation="12dp"/>
-
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:weightSum="10"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/taskTable">
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone">
-
-            <TextView
-                android:text="Sample Task"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="9"
-                android:id="@+id/referenceTask"
-                android:fontFamily="sans-serif"
-                android:textSize="20sp"
-                />
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                app:srcCompat="@android:drawable/checkbox_off_background"
-                android:id="@+id/referenceButton"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:scaleX="1"
-                android:scaleY="1"
-                />
-        </TableRow>
-
-    </TableLayout>
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_input_add"
-        android:id="@+id/addButton"
-        android:layout_weight="1"
-        android:background="@android:color/transparent"
-        android:elevation="12dp"
-        android:layout_below="@+id/taskTable"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp"
-        />
+        android:textSize="16sp"
+        android:visibility="visible"/>
 
 
 </RelativeLayout>
