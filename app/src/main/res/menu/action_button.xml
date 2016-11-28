@@ -17,7 +17,7 @@
         android:id="@+id/action_myLists"
         android:title="@string/My_Lists"
         app:showAsAction="always"
-        android:icon="@drawable/ic_lists"/>
+        android:icon="@android:drawable/ic_dialog_map" />
 
 
 

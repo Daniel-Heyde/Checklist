@@ -23,11 +23,11 @@
         android:elevation="12dp"/>
 
 
-    <LinearLayout
+    <com.jmedeisis.draglinearlayout.DragLinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/LinearListLayout">
+        android:id="@+id/DraggableListLayout">
 
         <LinearLayout
             android:orientation="horizontal"
@@ -59,34 +59,20 @@
                 android:baselineAlignBottom="false"
                 android:layout_alignParentRight="false"/>
         </LinearLayout>
-    </LinearLayout>
+    </com.jmedeisis.draglinearlayout.DragLinearLayout>
 
-    <ImageButton
+    <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:clickable="true"
+        app:fabSize="normal"
         app:srcCompat="@android:drawable/ic_input_add"
         android:id="@+id/addButton"
-        android:layout_weight="1"
-        android:background="@android:color/transparent"
-        android:elevation="12dp"
-        android:layout_below="@+id/LinearListLayout"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp"
-        android:visibility="visible"/>
-
-    <TextView
-        android:text="@string/Add_New_Task"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/addButton"
-        android:layout_toRightOf="@+id/addButton"
-        android:layout_toEndOf="@+id/addButton"
-        android:id="@+id/NewTaskTextView"
-        android:textAllCaps="false"
-        android:paddingBottom="7dp"
-        android:textSize="16sp"
-        android:visibility="visible"/>
+        app:backgroundTint="@color/colorPrimaryDark"
+        android:accessibilityTraversalBefore="@+id/DraggableListLayout"
+        android:layout_above="@+id/refreshButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 
 </RelativeLayout>

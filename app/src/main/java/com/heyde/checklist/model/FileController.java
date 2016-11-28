@@ -14,7 +14,7 @@ import java.util.List;
  * Created by Daniel on 10/25/2016.
  */
 
-public class FileController{ //TODO set this up to run in background thread
+public class FileController { //TODO set this up to run in background thread
 
     private Context mContext;
     private BufferedReader mBufferedReader;
@@ -74,7 +74,7 @@ public class FileController{ //TODO set this up to run in background thread
     }
 
 
-    public List<String> getAvailableFiles(){
+    public List<String> getAvailableFiles() {
         File dir = new File(mContext.getFilesDir() + File.separator + "lists");
         dir.mkdirs();
         File[] files = dir.listFiles();
@@ -95,7 +95,6 @@ public class FileController{ //TODO set this up to run in background thread
         File forDelete = new File(mContext.getFilesDir() + File.separator + "lists" + File.separator + filename + ".txt");
         forDelete.delete();
     }
-
 
 
 }

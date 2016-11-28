@@ -1,13 +1,25 @@
 package com.heyde.checklist.model;
 
+import android.app.Activity;
+import android.content.ClipData;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
+import android.view.DragEvent;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.Toast;
+
+import com.heyde.checklist.ui.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.R.drawable.ic_delete;
+import static android.R.drawable.ic_menu_delete;
 
 /**
  * Created by Daniel on 10/17/2016.
@@ -21,15 +33,20 @@ public class TaskList {
     private List<LinearLayout> mLayoutRows;
     private String mName;
     private Boolean mNameChanged;
+    private Boolean mIsDeletable;
+    private MainActivity mActivity;
 
 
-    public TaskList(Context context, LinearLayout referenceLayout) {
+
+    public TaskList(Context context, LinearLayout referenceLayout, MainActivity activity) {
         mTasks = new ArrayList<>();
         mLayoutRows = new ArrayList<>();
         mContext = context;
+        mActivity = activity;
         mTaskTable = new TableLayout(mContext);
         mName = "New List";
         mNameChanged = false;
+        mIsDeletable = false;
         //TODO prevent too many tasks
     }
 
@@ -89,47 +106,9 @@ public class TaskList {
         return mContext;
     }
 
-//    public void makeNewLine(Task newTaskObject) { //TASK TABLE VERSION
-//
-//        TableRow newTaskRow = new TableRow(mContext);
-//
-//        newTaskRow.setPadding(0, 30, 0, 0);
-//
-//        // add views to new row
-//        newTaskRow.addView(newTaskObject.getTextView());
-//        newTaskRow.addView(newTaskObject.getCheckButton());
-//        newTaskRow.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder();
-//                v.startDrag(null, shadowBuilder, v, 0);
-//                return false;
-//            }
-//        });
-//        newTaskRow.setOnDragListener(new View.OnDragListener() {
-//            @Override
-//            public boolean onDrag(View v, DragEvent event) {
-//                switch(event.getAction()){
-//                    case DragEvent.ACTION_DRAG_STARTED:
-//                        Toast toast = Toast.makeText(mContext, "DRAG STARTED", Toast.LENGTH_SHORT);
-//                        toast.show();
-//                        break;
-//                    case DragEvent.ACTION_DRAG_ENDED:
-//                        toast = Toast.makeText(mContext, "DRAG ENDED", Toast.LENGTH_SHORT);
-//                        toast.show();
-//                        break;
-//                    case DragEvent.ACTION_DRAG_ENTERED:
-//                        toast = Toast.makeText(mContext, "DRAG ENTERED", Toast.LENGTH_SHORT);
-//                        toast.show();
-//                        break;
-//                }
-//                return false;
-//            }
-//        });
+    public void makeNewLine(final Task newTaskObject) {
 
-    public void makeNewLine(Task newTaskObject) {
-
-        LinearLayout newLayout = new LinearLayout(mContext);
+        final LinearLayout newLayout = new LinearLayout(mContext);
 
         newLayout.setOrientation(LinearLayout.HORIZONTAL);
         newLayout.setPadding(0, 30, 0, 0);
@@ -137,41 +116,48 @@ public class TaskList {
         // add views to new row
         newLayout.addView(newTaskObject.getTextView());
         newLayout.addView(newTaskObject.getCheckButton());
-//        newLayout.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder();
-//                v.startDrag(null, shadowBuilder, v, 0);
-//                return false;
-//            }
-//        });
-//        newLayout.setOnDragListener(new View.OnDragListener() {
-//            @Override
-//            public boolean onDrag(View v, DragEvent event) {
-//                switch(event.getAction()){
-//                    case DragEvent.ACTION_DRAG_STARTED:
-//                        Toast toast = Toast.makeText(mContext, "DRAG STARTED", Toast.LENGTH_SHORT);
-//                        toast.show();
-//                        break;
-//                    case DragEvent.ACTION_DRAG_ENDED:
-//                        toast = Toast.makeText(mContext, "DRAG ENDED", Toast.LENGTH_SHORT);
-//                        toast.show();
-//                        break;
-//                    case DragEvent.ACTION_DRAG_ENTERED:
-//                        toast = Toast.makeText(mContext, "DRAG ENTERED", Toast.LENGTH_SHORT);
-//                        toast.show();
-//                        break;
-//                }
-//                return false;
-//            }
-//        });
 
-        // add new row to table
-//        mTaskTable.addView(newTaskRow);
+        newLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mIsDeletable) {
+                    //TODO confirm with user? make long click then delete multiple?
+                    mLayoutRows.remove(newLayout);
+                } else {
+                    newTaskObject.toggleCheckButton();
+                }
+            }
+        });
+
+        for (int i = 0; i < newLayout.getChildCount(); i++) {
+            newLayout.getChildAt(i).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mIsDeletable) {
+                        //TODO confirm with user? make long click then delete multiple?
+                        mLayoutRows.remove(newLayout);
+                        mActivity.displayTable(TaskList.this);
+                        if (mLayoutRows.isEmpty()){
+                            mActivity.toggleEditMode();
+                        }
+                    } else {
+                        newTaskObject.toggleCheckButton();
+                    }
+                }
+            });
+        }
+
+        // add row to linearlayout
         mLayoutRows.add(newLayout);
     }
 
-
+    public void toggleDeletable(){
+        if (mIsDeletable) {
+            mIsDeletable = false;
+        } else{
+            mIsDeletable = true;
+        }
+    }
 
     public List<Task> getTasks() {
         return mTasks;
@@ -182,3 +168,5 @@ public class TaskList {
     }
 
 }
+
+

@@ -6,8 +6,10 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import static android.R.color.transparent;
 import static android.R.drawable.checkbox_off_background;
@@ -28,6 +30,8 @@ public class Task {
     private boolean mIsDeletable;
     private boolean mFlaggedForDeletion;
 
+    private ViewSwitcher mSwitcher;
+
     public Task(String taskText, boolean isChecked, Context context, TextView referenceTextView, ImageButton referenceImageButton) {
         mTaskText = taskText;
         mIsChecked = isChecked;
@@ -35,11 +39,25 @@ public class Task {
         mFlaggedForDeletion = false;
         createTextView(referenceTextView);
         createImageButton(referenceImageButton);
+        mSwitcher = new ViewSwitcher(mContext);
+        setUpViewSwitcher();
     }
 
+    public void setUpViewSwitcher(){
+        mSwitcher.addView(mTextView);
+        mSwitcher.addView(new EditText(mContext));
+    }
+
+    public ViewSwitcher getSwitcher() {
+        return mSwitcher;
+    }
 
     public TextView getTextView() {
         return mTextView;
+    }
+
+    public String taskToString(){
+        return(mTaskText+ ":::" + mIsChecked);
     }
 
     public boolean isFlaggedForDeletion() {
@@ -66,20 +84,6 @@ public class Task {
         newCheckButton.setBackgroundColor(color);
         newCheckButton.setTag("noDelete");
 
-        newCheckButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mIsDeletable) {
-                    mFlaggedForDeletion = true;
-                    Drawable delete = fetchADrawable(ic_delete);
-                    mCheckButton.setImageDrawable(delete);
-                    mCheckButton.setTag("delete");
-                } else {
-                    toggleCheckButton();// use tags instead of boolean flags?
-                }
-            }
-        });
-//        newCheckButton.setAdjustViewBounds(true);
         mCheckButton = newCheckButton;
     }
 

@@ -35,8 +35,7 @@ public class SaveFile extends AsyncTask<TaskList, Void, Void> {
 
                 mFileWriter = new FileWriter(textFile);
                 for (Task task : list.getTasks()) {
-                    mFileWriter.write(task.getTaskText() + ":::" + task.isChecked() + "\n");
-                    Log.i("WRITING", task.getTaskText() + ":::" + task.isChecked());
+                    mFileWriter.write(task.taskToString() + "\n");
                 }
             } catch (IOException e) {
                 e.printStackTrace();

@@ -47,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
     Button mRefreshButton;
     @BindView(R.id.addButton)
     ImageButton mAddButton;
-    @BindView(R.id.LinearListLayout)
-    LinearLayout mLinearLayout;
+    @BindView(R.id.DraggableListLayout)
+    com.jmedeisis.draglinearlayout.DragLinearLayout mLinearLayout;
     @BindView(R.id.referenceTask)
     TextView mReferenceText;
     @BindView(R.id.referenceButton)
@@ -74,9 +74,13 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater layoutInflater = getLayoutInflater();
         layoutInflater.inflate(R.layout.listname_actionbar, null);
         mTitleText = (TextView) findViewById(R.id.titleEditText);
-        mWorkingList = new TaskList(this, mLinearLayout);
+        mWorkingList = new TaskList(this, mLinearLayout, MainActivity.this);
 
         mFileController = new FileController(this);
+        // FIXME-URGENT change back to ic_lists
+
+
+
         // TODO EDIT: change textviews to edittexts while edit is true
         // TODO Alert user if save failed, ie. duplicate name
         // FIXME No Files :( is clickable and acts like a list when clicked.
@@ -267,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void displayTable(TaskList taskList) {
+    public void displayTable(TaskList taskList) {
         mLinearLayout.removeAllViews();
         for (LinearLayout layout : taskList.getTableRows()) {
             mLinearLayout.addView(layout);
@@ -286,20 +290,22 @@ public class MainActivity extends AppCompatActivity {
     private void createNewList() {
         mFileController.saveList(mWorkingList);
         mPreviousList = mWorkingList;
-        mWorkingList = new TaskList(this, mLinearLayout);
+        mWorkingList = new TaskList(this, mLinearLayout, MainActivity.this);
         setTitle(true);
         displayTable(mWorkingList);
     }
 
     private void switchToLoadedList(MenuItem item) {
-        mFileController.saveList(mWorkingList); // save old list before rewriting table
-        mPreviousList = mWorkingList;
-        String itemName = item.getTitle().toString();
-        ArrayList<String> taskList = new ArrayList<>(mFileController.loadFile(itemName));
-        TaskList newList = fileToList(taskList, itemName);
-        mWorkingList = newList;
-        mTitleText.setText(mWorkingList.getName());
-        displayTable(mWorkingList);
+        if (!item.getTitle().equals("No Files :(")) {
+            mFileController.saveList(mWorkingList); // save old list before rewriting table
+            mPreviousList = mWorkingList;
+            String itemName = item.getTitle().toString();
+            ArrayList<String> taskList = new ArrayList<>(mFileController.loadFile(itemName));
+            TaskList newList = fileToList(taskList, itemName);
+            mWorkingList = newList;
+            mTitleText.setText(mWorkingList.getName());
+            displayTable(mWorkingList);
+        }
     }
 
     private void switchToPreviousList() { // should I set it straight to workinglist?
@@ -309,14 +315,14 @@ public class MainActivity extends AppCompatActivity {
             TaskList newList = fileToList(taskList, mPreviousList.getName());
             mWorkingList = newList;
         } else {
-            mWorkingList = new TaskList(this, mLinearLayout);
+            mWorkingList = new TaskList(this, mLinearLayout, MainActivity.this);
         }
         mTitleText.setText(mWorkingList.getName());
         displayTable(mWorkingList);
     }
 
     private TaskList fileToList(ArrayList<String> inputList, String name) {
-        TaskList newList = new TaskList(mContext, mLinearLayout);
+        TaskList newList = new TaskList(mContext, mLinearLayout, MainActivity.this);
 
         for (String taskText : inputList) {
             String[] taskProps;
@@ -364,7 +370,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         displayList(num);
                     } else {// no lists to display
-                        mWorkingList = new TaskList(mContext, mLinearLayout);
+                        mWorkingList = new TaskList(mContext, mLinearLayout, MainActivity.this);
                         mTitleText.setText(mWorkingList.getName());
                         displayTable(mWorkingList);
                     }
@@ -399,21 +405,24 @@ public class MainActivity extends AppCompatActivity {
     // The following is used to edit list entries and delete lists
     // Not sure if I should make this its own activity
 
-    private void toggleEditMode() {
+    public void toggleEditMode() {
         ActionMenuItemView editIcon = (ActionMenuItemView) findViewById(R.id.add_new_list);
 
         Drawable actionIcon;
         if (!mTasksEditable) { // make things so they can be deleted
             mRefreshButton.setVisibility(View.INVISIBLE);
+            mAddButton.setVisibility(View.INVISIBLE);
             mTasksEditable = true;
+            mWorkingList.toggleDeletable();
             for (Task task : mWorkingList.getTasks()) {
                 task.prepForDelete();
             }
             actionIcon = fetchADrawable(ic_menu_delete);
         } else { // restore things to normal state
             mRefreshButton.setVisibility(View.VISIBLE);
+            mAddButton.setVisibility(View.VISIBLE);
             mTasksEditable = false;
-            mWorkingList.checkForRemoval();
+            mWorkingList.toggleDeletable();
             for (Task task : mWorkingList.getTasks()) {
                 task.restoreCheckButton();
             }
