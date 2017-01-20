@@ -1,6 +1,7 @@
 package com.heyde.checklist.model;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,7 +15,7 @@ import java.util.List;
  * Created by Daniel on 10/25/2016.
  */
 
-public class FileController { //TODO set this up to run in background thread
+public class FileController {
 
     private Context mContext;
     private BufferedReader mBufferedReader;
@@ -85,8 +86,6 @@ public class FileController { //TODO set this up to run in background thread
                 filename = filename.substring(0, filename.length() - 4);
                 availableFiles.add(filename);
             }
-        } else {
-            availableFiles.add("No Files :(");
         }
         return availableFiles;
     }

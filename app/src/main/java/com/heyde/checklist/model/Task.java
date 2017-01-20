@@ -1,21 +1,18 @@
 package com.heyde.checklist.model;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
+
+import com.heyde.checklist.R;
 
 import static android.R.color.transparent;
-import static android.R.drawable.checkbox_off_background;
-import static android.R.drawable.checkbox_on_background;
-import static android.R.drawable.ic_delete;
-import static android.R.drawable.ic_menu_delete;
+import static android.R.drawable.ic_menu_edit;
 
 /**
  * Created by Daniel on 10/8/2016.
@@ -26,30 +23,15 @@ public class Task {
     private boolean mIsChecked;
     private Context mContext;
     private TextView mTextView;
-    private ImageButton mCheckButton;
-    private boolean mIsDeletable;
-    private boolean mFlaggedForDeletion;
-
-    private ViewSwitcher mSwitcher;
+    private ImageView mCheckBox;
+    private boolean mIsEditable;
 
     public Task(String taskText, boolean isChecked, Context context, TextView referenceTextView, ImageButton referenceImageButton) {
         mTaskText = taskText;
         mIsChecked = isChecked;
         mContext = context;
-        mFlaggedForDeletion = false;
         createTextView(referenceTextView);
         createImageButton(referenceImageButton);
-        mSwitcher = new ViewSwitcher(mContext);
-        setUpViewSwitcher();
-    }
-
-    public void setUpViewSwitcher(){
-        mSwitcher.addView(mTextView);
-        mSwitcher.addView(new EditText(mContext));
-    }
-
-    public ViewSwitcher getSwitcher() {
-        return mSwitcher;
     }
 
     public TextView getTextView() {
@@ -60,66 +42,37 @@ public class Task {
         return(mTaskText+ ":::" + mIsChecked);
     }
 
-    public boolean isFlaggedForDeletion() {
-        return mFlaggedForDeletion;
+    public boolean isEditable() {
+        return mIsEditable;
     }
 
     private void createImageButton(ImageButton referenceImageButton) {
-        final ImageButton newCheckButton = new ImageButton(mContext);
-        newCheckButton.setLayoutParams(referenceImageButton.getLayoutParams());
+        final ImageView newCheckBox = new ImageButton(mContext);
+        newCheckBox.setLayoutParams(referenceImageButton.getLayoutParams());
+        newCheckBox.setPadding(0,0,15,0);
         Drawable checkbox;
             if (!isChecked()) {
-                checkbox = fetchADrawable(checkbox_off_background);
+                checkbox = ContextCompat.getDrawable(mContext, R.drawable.checkbox_off);
             } else {
-                checkbox = fetchADrawable(checkbox_on_background);
+                checkbox = ContextCompat.getDrawable(mContext, R.drawable.checkbox_on);
             }
-        newCheckButton.setImageDrawable(checkbox);
-        newCheckButton.setPadding(0, 2, 0, 0);// initial one had to be padded 2dp, so these will follow to make it uniform
-        int color;
-        if (Build.VERSION.SDK_INT >= 23) {
-            color = ContextCompat.getColor(mContext, transparent);
-        } else {
-            color = mContext.getResources().getColor(transparent);
-        }
-        newCheckButton.setBackgroundColor(color);
-        newCheckButton.setTag("noDelete");
+        newCheckBox.setImageDrawable(checkbox);
+        newCheckBox.setBackgroundColor(ContextCompat.getColor(mContext, transparent));
 
-        mCheckButton = newCheckButton;
-    }
-
-    private Drawable fetchADrawable(int name) {
-        Drawable drbl;
-        if (Build.VERSION.SDK_INT >= 21) {
-            drbl = mContext.getDrawable(name);
-        } else { // for older devices
-            drbl = mContext.getResources().getDrawable(name);
-        }
-        return drbl;
-    }
-
-    public void restoreCheckButton() {
-
-        Drawable checkbox;
-        if (!mIsChecked) {
-                checkbox = fetchADrawable(checkbox_off_background);
-            } else {
-                checkbox = fetchADrawable(checkbox_on_background);
-            }
-        mIsDeletable = false;
-        mCheckButton.setImageDrawable(checkbox);
+        mCheckBox = newCheckBox;
     }
 
     public void toggleCheckButton() {
 
         Drawable checkbox;
         if (!mIsChecked) {
-            checkbox = fetchADrawable(checkbox_on_background);
+            checkbox = ContextCompat.getDrawable(mContext, R.drawable.checkbox_on);
             mIsChecked = true;
         } else {
-            checkbox = fetchADrawable(checkbox_off_background);
+            checkbox = ContextCompat.getDrawable(mContext, R.drawable.checkbox_off);
             mIsChecked = false;
         }
-        mCheckButton.setImageDrawable(checkbox);
+        mCheckBox.setImageDrawable(checkbox);
     }
 
     private void createTextView(TextView referenceTextView) {
@@ -133,25 +86,30 @@ public class Task {
 
     }
 
+    public void restoreCheckButton() {
+
+        Drawable checkbox;
+        if (!mIsChecked) {
+            checkbox = ContextCompat.getDrawable(mContext, R.drawable.checkbox_off);
+        } else {
+            checkbox = ContextCompat.getDrawable(mContext, R.drawable.checkbox_on);
+        }
+        mIsEditable = false;
+        mCheckBox.setImageDrawable(checkbox);
+        mTextView.setTextColor(Color.parseColor("#8a000000"));
+    }
+
 
     public void prepForDelete() {
-        mIsDeletable = true;
-        Drawable image;
-        if (Build.VERSION.SDK_INT >= 21) {
-            image = mContext.getDrawable(ic_menu_delete);
-        } else { // for older devices
-            image = mContext.getResources().getDrawable(ic_menu_delete);
-        }
-        mCheckButton.setImageDrawable(image);
+        mIsEditable = true;
+        mCheckBox.setImageDrawable(ContextCompat.getDrawable(mContext, ic_menu_edit));
+        mTextView.setTextColor(Color.WHITE);
     }
 
-    public ImageButton getCheckButton() {
-        return mCheckButton;
+    public ImageView getCheckBox() {
+        return mCheckBox;
     }
 
-    public void setCheckButton(ImageButton checkButton) {
-        mCheckButton = checkButton;
-    }
 
     public String getTaskText() {
         return mTaskText;
@@ -163,9 +121,5 @@ public class Task {
 
     public boolean isChecked() {
         return mIsChecked;
-    }
-
-    private void setChecked(boolean checked) {
-        mIsChecked = checked;
     }
 }

@@ -3,25 +3,9 @@
 
     <item
         android:id="@+id/add_new_list"
-        android:icon="@android:drawable/ic_menu_add"
-        android:title="@string/Add_List"
+        android:icon="@drawable/ic_list_add"
+        android:title="Add List"
         app:showAsAction="ifRoom"/>
-
-    <item
-        android:id="@+id/edit_list"
-        android:icon="@android:drawable/ic_menu_edit"
-        android:title="@string/Edit_List"
-        app:showAsAction="ifRoom"/>
-
-    <item
-        android:id="@+id/action_myLists"
-        android:title="@string/My_Lists"
-        app:showAsAction="always"
-        android:icon="@android:drawable/ic_dialog_map" />
-
-
-
-
 
 
 </menu>
