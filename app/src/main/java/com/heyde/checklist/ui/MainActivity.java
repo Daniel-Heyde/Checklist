@@ -233,7 +233,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mFileController.saveList(mWorkingList);
+        if (!mFileController.getAvailableFiles().isEmpty()) {
+            mFileController.saveList(mWorkingList);
+        }
     }
 
     @Override

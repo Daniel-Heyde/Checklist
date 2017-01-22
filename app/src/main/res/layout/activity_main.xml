@@ -26,7 +26,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_list_add"
+        app:srcCompat="@drawable/ic_list_add_dark"
         android:layout_below="@+id/noListsText"
         android:layout_toRightOf="@+id/noListsText2"
         android:id="@+id/noListsIcon"
@@ -62,18 +62,31 @@
         android:textSize="24sp"
         android:layout_centerHorizontal="true"/>
 
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/task_add"
+        android:id="@+id/addButton"
+        app:backgroundTint="@color/colorPrimary"
+        android:accessibilityTraversalBefore="@+id/DraggableListLayout"
+        app:elevation="3dp"
+        android:layout_marginBottom="11dp"
+        android:layout_above="@+id/refreshButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/scroll"
         android:paddingBottom="15dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_above="@+id/addButton"
         android:requiresFadingEdge="vertical"
         android:fadingEdgeLength="100dp"
-        >
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <com.jmedeisis.draglinearlayout.DragLinearLayout
             android:orientation="vertical"
@@ -114,21 +127,6 @@
             </LinearLayout>
         </com.jmedeisis.draglinearlayout.DragLinearLayout>
     </ScrollView>
-
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:fabSize="normal"
-        app:srcCompat="@drawable/task_add"
-        android:id="@+id/addButton"
-        app:backgroundTint="@color/colorPrimary"
-        android:accessibilityTraversalBefore="@+id/DraggableListLayout"
-        app:elevation="3dp"
-        android:layout_marginBottom="11dp"
-        android:layout_above="@+id/refreshButton"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
 
 
 </RelativeLayout>
