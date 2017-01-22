@@ -36,7 +36,6 @@ public class TaskList {
         mContext = context;
         mActivity = activity;
         mName = "New List";
-        mNameChanged = false;
         mInListEditMode = false;
     }
 
@@ -44,13 +43,8 @@ public class TaskList {
         return mLayoutRows;
     }
 
-    public Boolean getNameChanged() {
-        return mNameChanged;
-    }
-
     public void setName(String name) {
 
-        mNameChanged = true;
         mName = name;
     }
 
@@ -77,23 +71,23 @@ public class TaskList {
         mTasks.add(pos2, task);
         mLayoutRows.remove(row);
         mLayoutRows.add(pos2, row);
-        for (int i=0; i<mLayoutRows.size(); i++){
+        for (int i = 0; i < mLayoutRows.size(); i++) {
             if (!mDeleteList.contains(mTasks.get(i))) {
                 setRowBackgroundColor(mLayoutRows.get(i));
             }
         }
     }
 
-    private void generateDeleteList(){
+    private void generateDeleteList() {
         mDeleteList.clear();
-        for (Task task : mTasks){
-            if (task.isEditable()){
+        for (Task task : mTasks) {
+            if (task.isEditable()) {
                 mDeleteList.add(task);
             }
         }
     }
 
-    public int getDeleteListSize(){
+    public int getDeleteListSize() {
         return mDeleteList.size();
     }
 
@@ -108,7 +102,7 @@ public class TaskList {
         // add views to new row
         ImageView dragButton = new ImageView(mContext);
         dragButton.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.drag_handle));
-        dragButton.setPadding(0,0,10,0);
+        dragButton.setPadding(0, 0, 10, 0);
 //        dragButton.setScaleX((float).9);
 //        dragButton.setScaleY((float).9);
         newLayout.addView(dragButton);
@@ -117,62 +111,94 @@ public class TaskList {
 
         newLayout.setGravity(Gravity.CENTER_VERTICAL);
 
-
-
-
-            for(int i = 1; i<newLayout.getChildCount(); i++) { // onclick listener for buttons and text
-                newLayout.getChildAt(i).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (newTaskObject.isEditable()) { // if selected, edit
-                            mActivity.addTask(false, newTaskObject);
-                            newTaskObject.restoreCheckButton();
-                            setRowBackgroundColor(newLayout);
-                            mActivity.switchToDelete();
-                            mDeleteList.remove(newTaskObject);
-                        } else { // if not selected, toggle
-                            newTaskObject.toggleCheckButton();
-                        }
-                    }
-                });
-
-                // longclick to handle select and delete
-                newLayout.getChildAt(i).setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        if(!mInListEditMode) {
-                            if (!newTaskObject.isEditable()) {
-                                setDeleteBackgroundColor(newLayout);
-                                newTaskObject.prepForDelete();
-                            } else {
-                                setRowBackgroundColor(newLayout);
-                                newTaskObject.restoreCheckButton();
-                            }
-                            generateDeleteList();
-                            mActivity.switchToDelete();
-                        }
-                        return true;
-                    }
-                });
+        newLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (newTaskObject.isEditable()) { // if selected, edit
+                    mActivity.addTask(false, newTaskObject);
+                    newTaskObject.restoreCheckButton();
+                    setRowBackgroundColor(newLayout);
+                    mActivity.switchToDelete();
+                    mDeleteList.remove(newTaskObject);
+                } else { // if not selected, toggle
+                    newTaskObject.toggleCheckButton();
+                }
             }
+        });
 
-            // add row to linearlayout
-            mLayoutRows.add(newLayout);
+        // longclick to handle select and delete
+        newLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (!mInListEditMode) {
+                    if (!newTaskObject.isEditable()) {
+                        setDeleteBackgroundColor(newLayout);
+                        newTaskObject.switchToEdit();
+                    } else {
+                        setRowBackgroundColor(newLayout);
+                        newTaskObject.restoreCheckButton();
+                    }
+                    generateDeleteList();
+                    mActivity.switchToDelete();
+                }
+                return true;
+            }
+        });
 
-            setRowBackgroundColor(newLayout);
+
+        for (int i = 1; i < newLayout.getChildCount(); i++) { // onclick listener for buttons and text
+            newLayout.getChildAt(i).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (newTaskObject.isEditable()) { // if selected, edit
+                        mActivity.addTask(false, newTaskObject);
+                        newTaskObject.restoreCheckButton();
+                        setRowBackgroundColor(newLayout);
+                        mActivity.switchToDelete();
+                        mDeleteList.remove(newTaskObject);
+                    } else { // if not selected, toggle
+                        newTaskObject.toggleCheckButton();
+                    }
+                }
+            });
+
+            // longclick to handle select and delete
+            newLayout.getChildAt(i).setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (!mInListEditMode) {
+                        if (!newTaskObject.isEditable()) {
+                            setDeleteBackgroundColor(newLayout);
+                            newTaskObject.switchToEdit();
+                        } else {
+                            setRowBackgroundColor(newLayout);
+                            newTaskObject.restoreCheckButton();
+                        }
+                        generateDeleteList();
+                        mActivity.switchToDelete();
+                    }
+                    return true;
+                }
+            });
         }
 
-    public void refreshRows(){
-        for (int i = 0; i< mLayoutRows.size(); i++){
-            if (mLayoutRows.get(i).getChildAt(0).toString() != mTasks.get(i).getTaskText()){
+        // add row to linearlayout
+        mLayoutRows.add(newLayout);
+
+        setRowBackgroundColor(newLayout);
+    }
+
+    public void refreshRows() {
+        for (int i = 0; i < mLayoutRows.size(); i++) {
+            if (!mLayoutRows.get(i).getChildAt(0).toString().equals(mTasks.get(i).getTaskText())) {
                 TextView layoutText = (TextView) mLayoutRows.get(i).getChildAt(1);
                 layoutText.setText(mTasks.get(i).getTaskText());
             }
         }
     }
 
-    public void deleteSelected(){
-        for (Task task : mDeleteList){
+    public void deleteSelected() {
+        for (Task task : mDeleteList) {
             int index = mTasks.indexOf(task);
             mTasks.remove(index);
             mLayoutRows.remove(index);

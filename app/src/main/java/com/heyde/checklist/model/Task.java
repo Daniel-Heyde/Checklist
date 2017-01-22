@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.heyde.checklist.R;
 
 import static android.R.color.transparent;
-import static android.R.drawable.ic_menu_edit;
 
 /**
  * Created by Daniel on 10/8/2016.
@@ -100,9 +99,9 @@ public class Task {
     }
 
 
-    public void prepForDelete() {
+    public void switchToEdit() {
         mIsEditable = true;
-        mCheckBox.setImageDrawable(ContextCompat.getDrawable(mContext, ic_menu_edit));
+        mCheckBox.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.edit_task));
         mTextView.setTextColor(Color.WHITE);
     }
 

@@ -25,14 +25,9 @@ public class SaveFile extends AsyncTask<TaskList, Void, Void> {
     protected Void doInBackground(TaskList... tList) {
         TaskList list = tList[0];// varargs? research more into this
         FileWriter mFileWriter = null;
-        if (!(!list.getNameChanged() && list.getTasks().size() == 0)) { // if name hasnt been changed and list is empty, don't save
-
             File directory = new File(mContext.getFilesDir() + File.separator + "lists"); // list files will be stored in data/data/com.heyde.checklist/files/lists
             File textFile = new File(directory + File.separator + list.getName() + ".txt");
             try {
-
-                textFile.createNewFile();
-
                 mFileWriter = new FileWriter(textFile);
                 for (Task task : list.getTasks()) {
                     mFileWriter.write(task.taskToString() + "\n");
@@ -44,9 +39,10 @@ public class SaveFile extends AsyncTask<TaskList, Void, Void> {
                     mFileWriter.close();
                 } catch (IOException e) {
                     e.printStackTrace();
+                } catch (NullPointerException npe){
+                    npe.printStackTrace();
                 }
             }
-        }
         return null;
     }
 }
