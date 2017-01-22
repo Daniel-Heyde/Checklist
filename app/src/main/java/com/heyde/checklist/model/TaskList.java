@@ -101,7 +101,7 @@ public class TaskList {
 
         // add views to new row
         ImageView dragButton = new ImageView(mContext);
-        dragButton.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.drag_handle));
+        dragButton.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.drag_handle_temp));
         dragButton.setPadding(0, 0, 10, 0);
 //        dragButton.setScaleX((float).9);
 //        dragButton.setScaleY((float).9);
