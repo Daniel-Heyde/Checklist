@@ -77,7 +77,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"/>
 
-    <ScrollView
+    <com.heyde.checklist.ui.DraggableScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/scroll"
@@ -86,7 +86,8 @@
         android:fadingEdgeLength="100dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/addButton">
 
         <com.jmedeisis.draglinearlayout.DragLinearLayout
             android:orientation="vertical"
@@ -126,7 +127,7 @@
                     android:layout_gravity="center_vertical"/>
             </LinearLayout>
         </com.jmedeisis.draglinearlayout.DragLinearLayout>
-    </ScrollView>
+    </com.heyde.checklist.ui.DraggableScrollView>
 
 
 </RelativeLayout>
