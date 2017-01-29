@@ -273,8 +273,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // specify input type
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        input.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         input.setSelection(input.getText().length());
         builder.setView(input); // takes builder, tells it to show the edittext that we're now editing
 
@@ -347,8 +346,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // specify input type
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        input.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+
         input.setSelection(input.getText().length());
         builder.setView(input); // takes builder, tells it to show the edittext that we're now editing
 

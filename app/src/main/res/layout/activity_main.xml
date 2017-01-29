@@ -83,7 +83,7 @@
         android:id="@+id/scroll"
         android:paddingBottom="15dp"
         android:requiresFadingEdge="vertical"
-        android:fadingEdgeLength="100dp"
+        android:fadingEdgeLength="40dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
