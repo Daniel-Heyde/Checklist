@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">SimpleCheck</string>
     <string name="Add_New_Task">Add New Task</string>
-    <string name="Clear_Progress">Clear Current Progress</string>
+    <string name="Clear_Progress">Uncheck All</string>
     <string name="My_Lists">My Lists</string>
     <string name="Add_List">Add List</string>
     <string name="Edit_List">Edit List</string>
+    <string name="Prev_Launch">Previously Launched</string>
 </resources>

@@ -2,17 +2,22 @@ package com.heyde.checklist.ui;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,6 +29,11 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ActionItemTarget;
+import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
+import com.github.amlcurran.showcaseview.targets.Target;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.heyde.checklist.R;
 import com.heyde.checklist.model.FileController;
 import com.heyde.checklist.model.Task;
@@ -35,6 +45,8 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.heyde.checklist.R.id.toolbar;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -51,16 +63,12 @@ public class MainActivity extends AppCompatActivity {
     TextView mReferenceText;
     @BindView(R.id.referenceButton)
     ImageButton mReferenceButton;
-    @BindView(R.id.noListsText)
-    TextView mNoLists1;
-    @BindView(R.id.noListsText2)
-    TextView mNoLists2;
-    @BindView(R.id.noListsText3)
-    TextView mNoLists3;
-    @BindView(R.id.noListsIcon)
-    ImageView mNoListsImg;
+    @BindView(R.id.noListsDisplay)
+    ViewGroup mNoLists;
     @BindView(R.id.scroll)
     ScrollView mScrollView;
+    @BindView(toolbar)
+    Toolbar mToolbar;
 
     private TextView mTitleText;
     private boolean mTasksEditable = false;
@@ -78,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         mContext = this;
+        setSupportActionBar(mToolbar);
 
         getSupportActionBar().setCustomView(R.layout.listname_actionbar);
         getSupportActionBar().setDisplayShowCustomEnabled(true);
@@ -86,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
         layoutInflater.inflate(R.layout.listname_actionbar, null);
         mTitleText = (TextView) findViewById(R.id.titleEditText);
         mDropDownCarrot = (ImageView) findViewById(R.id.imageDropDown);
-        mWorkingList = new TaskList(this, MainActivity.this);
         mDragLinearLayout.setContainerScrollView(mScrollView);
 
         mFileController = new FileController(this);
@@ -177,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        mDropDownCarrot.setOnLongClickListener(new View.OnLongClickListener(){
+        mDropDownCarrot.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 if (!mFileController.getAvailableFiles().isEmpty()) {
@@ -187,17 +195,91 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        displayList(0);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        boolean previouslyLaunched = prefs.getBoolean(getString(R.string.Prev_Launch), false);
+
+        if (true) {
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.putBoolean(getString(R.string.Prev_Launch), Boolean.TRUE);
+            edit.commit();
+
+            mWorkingList = new TaskList(this, MainActivity.this);
+
+            setNoListsVisible(false);
+            Task newTask = new Task("Sample Task", false, this, mReferenceText, mReferenceButton);
+            mWorkingList.addTask(newTask);
+            mWorkingList.makeNewLine(newTask);
+
+            displayTable(mWorkingList);
+            final LinearLayout lLayout = (LinearLayout) mDragLinearLayout.getChildAt(0);
+
+
+            mToolbar.inflateMenu(R.menu.action_button);
+            final ShowcaseView showcase = new ShowcaseView.Builder(this)
+                    .withMaterialShowcase()
+                    .setTarget(new ViewTarget(mToolbar.findViewById(R.id.add_new_list))) //Here is where you supply the id of the action bar item you want to display
+                    .setContentTitle("Create a List")
+                    .setContentText("Press to create a new list.")
+                    .build();
+            showcase.setButtonText("next");
+            showcase.setStyle(R.style.CustomShowcase);
+
+
+            showcase.overrideButtonClick(new View.OnClickListener() {
+                int count = 0;
+
+                @Override
+                public void onClick(View v) {
+                    count++;
+                    switch (count) {
+                        case 1:
+                            showcase.setTarget(new ViewTarget(mAddButton));
+                            showcase.setContentTitle("Add a Task");
+                            showcase.setContentText("Press to add tasks to your list.");
+                            break;
+
+                        case 2:
+                            showcase.setTarget(new ViewTarget(mToolbar.findViewById(R.id.titleEditText)));
+                            showcase.setContentTitle("Access Lists");
+                            showcase.setContentText("Press to access saved lists. \nHold to delete or rename the current list.");
+                            break;
+
+                        case 3:
+
+                            showcase.setTarget(new OffsetViewTarget(lLayout, -282, 0, MainActivity.this)); // task
+                            showcase.setContentTitle("Task");
+                            showcase.setContentText("Tap a task to check it off. Hold it to edit or delete. Use drag handle to drag.");
+                            break;
+
+                        case 4:
+                            showcase.setTarget(new ViewTarget(mRefreshButton));
+                            showcase.setContentTitle("\n\nUncheck All");
+                            showcase.setContentText("Press to clear all checkmarks. When in edit mode, press to delete selected tasks.");
+                            break;
+
+                        default:
+                            showcase.hide();
+                            mFileController.deleteList(mWorkingList.getName());
+                            displayList(0);
+                            break;
+
+                    }
+                }
+            });
+        } else {
+            displayList(0);
+        }
+
 
     }
 
-    private void titleOptions(){
+    private void titleOptions() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        String[] options = new String[] {"Rename List", "Delete List"};
+        String[] options = new String[]{"Rename List", "Delete List"};
         builder.setTitle("List Options");
-        builder.setItems(options, new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int choice){
-                if(choice == 0) { //rename list
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int choice) {
+                if (choice == 0) { //rename list
                     createListTitle(false);
                 } else { // delete list
                     confirmDelete();
@@ -212,18 +294,12 @@ public class MainActivity extends AppCompatActivity {
         if (visible) {
             mDragLinearLayout.removeAllViews();
             mTitleText.setText(R.string.app_name);
-            mNoListsImg.setVisibility(View.VISIBLE);
-            mNoLists1.setVisibility(View.VISIBLE);
-            mNoLists2.setVisibility(View.VISIBLE);
-            mNoLists3.setVisibility(View.VISIBLE);
+            mNoLists.setVisibility(View.VISIBLE);
             mRefreshButton.setVisibility(View.INVISIBLE);
             mAddButton.setVisibility(View.INVISIBLE);
             mDropDownCarrot.setVisibility(View.INVISIBLE);
         } else {
-            mNoListsImg.setVisibility(View.INVISIBLE);
-            mNoLists1.setVisibility(View.INVISIBLE);
-            mNoLists2.setVisibility(View.INVISIBLE);
-            mNoLists3.setVisibility(View.INVISIBLE);
+            mNoLists.setVisibility(View.INVISIBLE);
             mRefreshButton.setVisibility(View.VISIBLE);
             mAddButton.setVisibility(View.VISIBLE);
             mDropDownCarrot.setVisibility(View.VISIBLE);
@@ -283,7 +359,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 String newText = input.getText().toString();
 
-                if(newlist){ // setting a name for a new list
+                if (newlist) { // setting a name for a new list
                     mWorkingList = new TaskList(mContext, MainActivity.this);
                     mFileController.saveList(mWorkingList);
                     mWorkingList.setName(newText);
@@ -315,7 +391,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        }catch(NullPointerException npe){
+        } catch (NullPointerException npe) {
             npe.printStackTrace();
         }
 
@@ -328,7 +404,7 @@ public class MainActivity extends AppCompatActivity {
         negButton.setTextColor(Color.RED);
     }
 
-    public void addTask(final boolean newTask){
+    public void addTask(final boolean newTask) {
         addTask(newTask, null);
     }
 
@@ -382,7 +458,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        }catch(NullPointerException npe){
+        } catch (NullPointerException npe) {
             npe.printStackTrace();
         }
 
@@ -500,16 +576,16 @@ public class MainActivity extends AppCompatActivity {
 //                if (mFileController.getAvailableFiles().contains(mPreviousList.getName()) && !listName.equals(mPreviousList.getName())) { // switch to mPreviousList if prev list exists and is not mWorkingList
 //                    switchToPreviousList();
 //                } else { // if the last open list is no longer there
-                    int num = 0;
-                    if (mFileController.getAvailableFiles().size() > 1) { // if there are other lists available, pick the first one that is not the list to be deleted
-                        while (mFileController.getAvailableFiles().get(num).equals(listName)) {
-                            num++;
-                        }
-                        displayList(num);
+                int num = 0;
+                if (mFileController.getAvailableFiles().size() > 1) { // if there are other lists available, pick the first one that is not the list to be deleted
+                    while (mFileController.getAvailableFiles().get(num).equals(listName)) {
+                        num++;
                     }
+                    displayList(num);
+                }
 //                }
                 mFileController.deleteList(listName);
-                if (mFileController.getAvailableFiles().size()==0){
+                if (mFileController.getAvailableFiles().size() == 0) {
                     mWorkingList = null;
                     setNoListsVisible(true);
                 }
@@ -543,7 +619,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void switchToDelete(){
+    public void switchToDelete() {
         if (mWorkingList != null) { // will be null if there is no working list, ie. all lists are deleted or app has been opened for first time
             int deletableTasks = mWorkingList.getDeleteListSize();
             if (deletableTasks > 0) {
@@ -563,8 +639,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
 
 
 }
