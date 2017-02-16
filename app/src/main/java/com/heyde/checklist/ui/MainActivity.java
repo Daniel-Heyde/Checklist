@@ -119,28 +119,31 @@ public class MainActivity extends AppCompatActivity {
         mTitleText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mInEditMode) {
-                    createListTitle(false);
-                } else {
-                    PopupMenu popup = new PopupMenu(mContext, mTitleText);
-                    popup.getMenu().add(mWorkingList.getName());
-                    for (String filename : mFileController.getAvailableFiles()) {
-                        if (!filename.equals(mWorkingList.getName())) {
-                            popup.getMenu().add(filename);
+                if (mWorkingList != null) {
+                    //FIXME shows "New List" when clicking title (only happens after tutorial)
+                    if (mInEditMode) {
+                        createListTitle(false);
+                    } else {
+                        PopupMenu popup = new PopupMenu(mContext, mTitleText);
+                        popup.getMenu().add(mWorkingList.getName());
+                        for (String filename : mFileController.getAvailableFiles()) {
+                            if (!filename.equals(mWorkingList.getName())) {
+                                popup.getMenu().add(filename);
+                            }
                         }
-                    }
-                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            switchToLoadedList(item);
-                            return true;
-                        }
-                    });
-                    try {
-                        popup.show();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                switchToLoadedList(item);
+                                return true;
+                            }
+                        });
+                        try {
+                            popup.show();
+                        } catch (Exception e) {
+                            e.printStackTrace();
 
+                        }
                     }
                 }
             }
@@ -258,6 +261,7 @@ public class MainActivity extends AppCompatActivity {
                         default:
                             showcase.hide();
                             mFileController.deleteList(mWorkingList.getName());
+                            mWorkingList = null;
                             displayList(0);
                             break;
 
