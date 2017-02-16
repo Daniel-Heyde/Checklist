@@ -30,9 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.ActionItemTarget;
-import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
-import com.github.amlcurran.showcaseview.targets.Target;
+
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.heyde.checklist.R;
 import com.heyde.checklist.model.FileController;
@@ -198,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         boolean previouslyLaunched = prefs.getBoolean(getString(R.string.Prev_Launch), false);
 
-        if (true) {
+        if (!previouslyLaunched) {
             SharedPreferences.Editor edit = prefs.edit();
             edit.putBoolean(getString(R.string.Prev_Launch), Boolean.TRUE);
             edit.commit();
