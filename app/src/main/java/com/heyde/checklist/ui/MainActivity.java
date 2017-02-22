@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView mDropDownCarrot;
     private boolean mDeleteMode = false;
     private boolean mInEditMode = false;
+    boolean mInTutorial = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +98,90 @@ public class MainActivity extends AppCompatActivity {
 
         mFileController = new FileController(this);
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        boolean previouslyLaunched = prefs.getBoolean(getString(R.string.Prev_Launch), false);
+
+        if (!previouslyLaunched) {
+            mInTutorial = true;
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.putBoolean(getString(R.string.Prev_Launch), Boolean.TRUE);
+            edit.commit();
+
+            mWorkingList = new TaskList(this, MainActivity.this);
+
+            setNoListsVisible(false);
+            Task newTask = new Task("Sample Task", false, this, mReferenceText, mReferenceButton);
+            mWorkingList.addTask(newTask);
+            mWorkingList.makeNewLine(newTask);
+
+            displayTable(mWorkingList);
+            final LinearLayout lLayout = (LinearLayout) mDragLinearLayout.getChildAt(0);
+
+
+            mToolbar.inflateMenu(R.menu.action_button);
+            final ShowcaseView showcase = new ShowcaseView.Builder(this)
+                    .withMaterialShowcase()
+                    .setTarget(new ViewTarget(mToolbar.findViewById(R.id.add_new_list))) //Here is where you supply the id of the action bar item you want to display
+                    .setContentTitle("Create a List")
+                    .setContentText("Press to create a new list.")
+                    .build();
+            showcase.setButtonText("next");
+            showcase.setStyle(R.style.CustomShowcase);
+
+
+            showcase.overrideButtonClick(new View.OnClickListener() {
+                int count = 0;
+
+                @Override
+                public void onClick(View v) {
+                    count++;
+                    switch (count) {
+                        case 1:
+                            showcase.setTarget(new ViewTarget(mAddButton));
+                            showcase.setContentTitle("Add a Task");
+                            showcase.setContentText("Press to add tasks to your list.");
+                            break;
+
+                        case 2:
+                            showcase.setTarget(new ViewTarget(mToolbar.findViewById(R.id.titleEditText)));
+                            showcase.setContentTitle("Access Lists");
+                            showcase.setContentText("Press to access saved lists. \nHold to delete or rename the current list.");
+                            break;
+
+                        case 3:
+
+                            showcase.setTarget(new OffsetViewTarget(lLayout, -282, 0, MainActivity.this)); // task
+                            showcase.setContentTitle("Task");
+                            showcase.setContentText("Tap a task to check it off. Hold it to edit or delete. Use drag handle to drag.");
+                            break;
+
+                        case 4:
+                            showcase.setTarget(new ViewTarget(mRefreshButton));
+                            showcase.setContentTitle("\n\nUncheck All");
+                            showcase.setContentText("Press to clear all checkmarks. When in edit mode, press to delete selected tasks.");
+                            break;
+
+                        default:
+                            showcase.hide();
+                            mFileController.deleteList(mWorkingList.getName());
+                            mWorkingList = null;
+                            setListeners();
+                            mInTutorial = false;
+                            displayList(0);
+                            break;
+
+                    }
+                }
+            });
+        } else {
+            setListeners();
+            displayList(0);
+        }
+
+
+    }
+
+    private void setListeners() {
         mRefreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,7 +205,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (mWorkingList != null) {
-                    //FIXME shows "New List" when clicking title (only happens after tutorial)
                     if (mInEditMode) {
                         createListTitle(false);
                     } else {
@@ -195,84 +279,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        boolean previouslyLaunched = prefs.getBoolean(getString(R.string.Prev_Launch), false);
-
-        if (!previouslyLaunched) {
-            SharedPreferences.Editor edit = prefs.edit();
-            edit.putBoolean(getString(R.string.Prev_Launch), Boolean.TRUE);
-            edit.commit();
-
-            mWorkingList = new TaskList(this, MainActivity.this);
-
-            setNoListsVisible(false);
-            Task newTask = new Task("Sample Task", false, this, mReferenceText, mReferenceButton);
-            mWorkingList.addTask(newTask);
-            mWorkingList.makeNewLine(newTask);
-
-            displayTable(mWorkingList);
-            final LinearLayout lLayout = (LinearLayout) mDragLinearLayout.getChildAt(0);
-
-
-            mToolbar.inflateMenu(R.menu.action_button);
-            final ShowcaseView showcase = new ShowcaseView.Builder(this)
-                    .withMaterialShowcase()
-                    .setTarget(new ViewTarget(mToolbar.findViewById(R.id.add_new_list))) //Here is where you supply the id of the action bar item you want to display
-                    .setContentTitle("Create a List")
-                    .setContentText("Press to create a new list.")
-                    .build();
-            showcase.setButtonText("next");
-            showcase.setStyle(R.style.CustomShowcase);
-
-
-            showcase.overrideButtonClick(new View.OnClickListener() {
-                int count = 0;
-
-                @Override
-                public void onClick(View v) {
-                    count++;
-                    switch (count) {
-                        case 1:
-                            showcase.setTarget(new ViewTarget(mAddButton));
-                            showcase.setContentTitle("Add a Task");
-                            showcase.setContentText("Press to add tasks to your list.");
-                            break;
-
-                        case 2:
-                            showcase.setTarget(new ViewTarget(mToolbar.findViewById(R.id.titleEditText)));
-                            showcase.setContentTitle("Access Lists");
-                            showcase.setContentText("Press to access saved lists. \nHold to delete or rename the current list.");
-                            break;
-
-                        case 3:
-
-                            showcase.setTarget(new OffsetViewTarget(lLayout, -282, 0, MainActivity.this)); // task
-                            showcase.setContentTitle("Task");
-                            showcase.setContentText("Tap a task to check it off. Hold it to edit or delete. Use drag handle to drag.");
-                            break;
-
-                        case 4:
-                            showcase.setTarget(new ViewTarget(mRefreshButton));
-                            showcase.setContentTitle("\n\nUncheck All");
-                            showcase.setContentText("Press to clear all checkmarks. When in edit mode, press to delete selected tasks.");
-                            break;
-
-                        default:
-                            showcase.hide();
-                            mFileController.deleteList(mWorkingList.getName());
-                            mWorkingList = null;
-                            displayList(0);
-                            break;
-
-                    }
-                }
-            });
-        } else {
-            displayList(0);
-        }
-
-
     }
 
     private void titleOptions() {
@@ -321,10 +327,12 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.add_new_list:
-                if (mInEditMode) {
-                    confirmDelete();
-                } else {
-                    createNewList();
+                if (!mInTutorial) {
+                    if (mInEditMode) {
+                        confirmDelete();
+                    } else {
+                        createNewList();
+                    }
                 }
             default:
                 return false;
