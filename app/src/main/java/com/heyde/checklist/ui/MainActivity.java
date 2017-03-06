@@ -44,6 +44,8 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.widget.RelativeLayout.ABOVE;
+import static android.widget.RelativeLayout.BELOW;
 import static com.heyde.checklist.R.id.toolbar;
 
 
@@ -126,6 +128,12 @@ public class MainActivity extends AppCompatActivity {
                     .setContentText("Press to create a new list.")
                     .build();
             showcase.setButtonText("next");
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            layoutParams.setMargins(0,0,120,300);
+
+            showcase.setButtonPosition(layoutParams);
             showcase.setStyle(R.style.CustomShowcase);
 
 

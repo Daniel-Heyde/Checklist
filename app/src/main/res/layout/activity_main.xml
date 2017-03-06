@@ -27,22 +27,6 @@
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:elevation="12dp"/>
 
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:fabSize="normal"
-        app:srcCompat="@drawable/task_add"
-        android:id="@+id/addButton"
-        app:backgroundTint="@color/colorPrimary"
-        android:accessibilityTraversalBefore="@+id/DraggableListLayout"
-        app:elevation="3dp"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginBottom="11dp"
-        android:layout_above="@+id/refreshButton"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
-
     <com.heyde.checklist.ui.DraggableScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -105,6 +89,22 @@
         android:background="?attr/colorPrimary"
         android:layout_weight="1">
     </android.support.v7.widget.Toolbar>
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/task_add"
+        android:id="@+id/addButton"
+        app:backgroundTint="@color/colorPrimary"
+        android:accessibilityTraversalBefore="@+id/DraggableListLayout"
+        app:elevation="3dp"
+        android:layout_marginRight="22dp"
+        android:layout_marginEnd="22dp"
+        android:layout_alignBottom="@+id/refreshButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
 
 
 </RelativeLayout>
