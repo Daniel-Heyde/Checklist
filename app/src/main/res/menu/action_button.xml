@@ -7,5 +7,24 @@
         android:title="Add List"
         app:showAsAction="ifRoom"/>
 
+    <item
+        android:id="@+id/settings"
+        android:icon="@drawable/ic_settings"
+        android:title="Settings"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/review"
+                android:title="Review Tutorial"/>
+            <!--<item-->
+            <!--android:id="@+id/themes"-->
+            <!--android:title="Themes"/>-->
+            <item
+                android:id="@+id/about"
+                android:title="About"/>
+
+        </menu>
+    </item>
+
 
 </menu>

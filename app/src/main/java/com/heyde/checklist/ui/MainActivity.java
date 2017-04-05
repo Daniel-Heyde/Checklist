@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
@@ -12,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,13 +30,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.amlcurran.showcaseview.ShowcaseView;
-
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
+import com.heyde.checklist.BuildConfig;
 import com.heyde.checklist.R;
 import com.heyde.checklist.model.FileController;
 import com.heyde.checklist.model.Task;
 import com.heyde.checklist.model.TaskList;
-
 import com.jmedeisis.draglinearlayout.DragLinearLayout;
 
 import java.util.ArrayList;
@@ -44,8 +43,6 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static android.widget.RelativeLayout.ABOVE;
-import static android.widget.RelativeLayout.BELOW;
 import static com.heyde.checklist.R.id.toolbar;
 
 
@@ -104,89 +101,105 @@ public class MainActivity extends AppCompatActivity {
         boolean previouslyLaunched = prefs.getBoolean(getString(R.string.Prev_Launch), false);
 
         if (!previouslyLaunched) {
-            mInTutorial = true;
             SharedPreferences.Editor edit = prefs.edit();
             edit.putBoolean(getString(R.string.Prev_Launch), Boolean.TRUE);
-            edit.commit();
+            edit.apply();
 
-            mWorkingList = new TaskList(this, MainActivity.this);
-
-            setNoListsVisible(false);
-            Task newTask = new Task("Sample Task", false, this, mReferenceText, mReferenceButton);
-            mWorkingList.addTask(newTask);
-            mWorkingList.makeNewLine(newTask);
-
-            displayTable(mWorkingList);
-            final LinearLayout lLayout = (LinearLayout) mDragLinearLayout.getChildAt(0);
-
-
-            mToolbar.inflateMenu(R.menu.action_button);
-            final ShowcaseView showcase = new ShowcaseView.Builder(this)
-                    .withMaterialShowcase()
-                    .setTarget(new ViewTarget(mToolbar.findViewById(R.id.add_new_list))) //Here is where you supply the id of the action bar item you want to display
-                    .setContentTitle("Create a List")
-                    .setContentText("Press to create a new list.")
-                    .build();
-            showcase.setButtonText("next");
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            layoutParams.setMargins(0,0,120,300);
-
-            showcase.setButtonPosition(layoutParams);
-            showcase.setStyle(R.style.CustomShowcase);
-
-
-            showcase.overrideButtonClick(new View.OnClickListener() {
-                int count = 0;
-
-                @Override
-                public void onClick(View v) {
-                    count++;
-                    switch (count) {
-                        case 1:
-                            showcase.setTarget(new ViewTarget(mAddButton));
-                            showcase.setContentTitle("Add a Task");
-                            showcase.setContentText("Press to add tasks to your list.");
-                            break;
-
-                        case 2:
-                            showcase.setTarget(new ViewTarget(mToolbar.findViewById(R.id.titleEditText)));
-                            showcase.setContentTitle("Access Lists");
-                            showcase.setContentText("Press to access saved lists. \nHold to delete or rename the current list.");
-                            break;
-
-                        case 3:
-
-                            showcase.setTarget(new OffsetViewTarget(lLayout, -282, 0, MainActivity.this)); // task
-                            showcase.setContentTitle("Task");
-                            showcase.setContentText("Tap a task to check it off. Hold it to edit or delete. Use drag handle to drag.");
-                            break;
-
-                        case 4:
-                            showcase.setTarget(new ViewTarget(mRefreshButton));
-                            showcase.setContentTitle("\n\nUncheck All");
-                            showcase.setContentText("Press to clear all checkmarks. When in edit mode, press to delete selected tasks.");
-                            break;
-
-                        default:
-                            showcase.hide();
-                            mFileController.deleteList(mWorkingList.getName());
-                            mWorkingList = null;
-                            setListeners();
-                            mInTutorial = false;
-                            displayList(0);
-                            break;
-
-                    }
-                }
-            });
+            displayTutorial(true);
         } else {
             setListeners();
             displayList(0);
         }
 
 
+    }
+
+    private void displayTutorial(final boolean firstLaunch) {
+        mInTutorial = true;
+
+        if (!firstLaunch && mWorkingList != null){ // will run if they are reviewing tutorial and they have a list open
+            mFileController.saveList(mWorkingList);
+            mPreviousList = mWorkingList;
+        }
+        mWorkingList = new TaskList(this, MainActivity.this);
+
+        mTitleText.setText("Sample List");
+
+        setNoListsVisible(false);
+        Task newTask = new Task("Sample Task", false, this, mReferenceText, mReferenceButton);
+        mWorkingList.addTask(newTask);
+        mWorkingList.makeNewLine(newTask);
+
+        displayTable(mWorkingList);
+        final LinearLayout lLayout = (LinearLayout) mDragLinearLayout.getChildAt(0);
+
+        if (firstLaunch) {
+            mToolbar.inflateMenu(R.menu.action_button);
+        }
+        final ShowcaseView showcase = new ShowcaseView.Builder(this)
+                .withMaterialShowcase()
+                .setTarget(new ViewTarget(mToolbar.findViewById(R.id.add_new_list))) //Here is where you supply the id of the action bar item you want to display
+                .setContentTitle("Create a List")
+                .setContentText("Press to create a new list.")
+                .build();
+        showcase.setButtonText("next");
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        layoutParams.setMargins(0,0,120,300);
+
+        showcase.setButtonPosition(layoutParams);
+        showcase.setStyle(R.style.CustomShowcase);
+
+
+        showcase.overrideButtonClick(new View.OnClickListener() {
+            int count = 0;
+
+            @Override
+            public void onClick(View v) {
+                count++;
+                switch (count) {
+                    case 1:
+                        showcase.setTarget(new ViewTarget(mAddButton));
+                        showcase.setContentTitle("Add a Task");
+                        showcase.setContentText("Press to add tasks to your list.");
+                        break;
+
+                    case 2:
+                        showcase.setTarget(new ViewTarget(mToolbar.findViewById(R.id.titleEditText)));
+                        showcase.setContentTitle("Access Lists");
+                        showcase.setContentText("Press to access saved lists. \nHold to delete or rename the current list.");
+                        break;
+
+                    case 3:
+
+                        showcase.setTarget(new OffsetViewTarget(lLayout, -282, 0, MainActivity.this)); // task
+                        showcase.setContentTitle("Task");
+                        showcase.setContentText("Tap a task to check it off. Hold it to edit or delete. Use drag handle to drag.");
+                        break;
+
+                    case 4:
+                        showcase.setTarget(new ViewTarget(mRefreshButton));
+                        showcase.setContentTitle("\n\nUncheck All");
+                        showcase.setContentText("Press to clear all checkmarks. When in edit mode, press to delete selected tasks.");
+                        break;
+
+                    default:
+                        showcase.hide();
+                        mFileController.deleteList(mWorkingList.getName());
+                        mWorkingList = null;
+                        setListeners();
+                        mInTutorial = false;
+                        if (!firstLaunch && mPreviousList!=null) { // if they review the tutorial with no list open
+                            displayList(mFileController.getAvailableFiles().indexOf(mPreviousList.getName()));
+                        } else{
+                            displayList(0);
+                        }
+                        break;
+
+                }
+            }
+        });
     }
 
     private void setListeners() {
@@ -339,12 +352,36 @@ public class MainActivity extends AppCompatActivity {
                     if (mInEditMode) {
                         confirmDelete();
                     } else {
-                        createNewList();
+                        createListTitle(true);
                     }
                 }
+                return true;
+            case R.id.review:
+                displayTutorial(false);
+                return true;
+            case R.id.about:
+                showAboutDialog();
+                return true;
             default:
                 return false;
         }
+    }
+
+    private void showAboutDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("About");
+        TextView text = new TextView(mContext);
+        String textString = String.format("\nThank you for using my app!\n\nEmail me suggestions and comments at dheydedev@gmail.com\n\nSimpleCheck version %s", BuildConfig.VERSION_NAME);
+        text.setText(textString);
+        text.setGravity(Gravity.CENTER_HORIZONTAL);
+        builder.setView(text);
+        builder.setPositiveButton("close", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
     }
 
     @Override
@@ -377,6 +414,28 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 String newText = input.getText().toString();
 
+                int count = 1;
+                boolean nameChanged = false;
+                String newTextBase = newText;
+                String currentNameStripped = newText; // initializing to non null
+                String currentName = newText; // initializing to non null
+                if (!newlist) {
+                    currentName = mWorkingList.getName();
+                    if (currentName.length() > 3 && currentName.charAt(newText.length()) == (')') && currentName.charAt(newText.length() - 3) == '(') {
+                        currentNameStripped = currentName.substring(newText.lastIndexOf('('), newText.lastIndexOf(')'));
+                    }
+                }
+                while (mFileController.getAvailableFiles().contains(newText)) {
+                    if (!newlist && currentNameStripped.equals(newTextBase)){
+                        newText = currentName;
+                        nameChanged = true;
+                        break;
+                    }
+                    newText = newTextBase + " (" + count + ")";
+                    count++;
+                    nameChanged = true;
+                }
+
                 if (newlist) { // setting a name for a new list
                     mWorkingList = new TaskList(mContext, MainActivity.this);
                     mFileController.saveList(mWorkingList);
@@ -392,7 +451,18 @@ public class MainActivity extends AppCompatActivity {
                     mFileController.deleteList(prevName);
                     mTitleText.setText(mWorkingList.getName());
                 }
-            }
+
+                Toast toast;
+                if (nameChanged) {
+                    toast = Toast.makeText(mContext, "This name already exists! Renaming to \"" + newText + "\".", Toast.LENGTH_LONG);
+                } else if (!newlist) {
+                    toast = Toast.makeText(mContext, "Name successfully changed to " + newText + ".", Toast.LENGTH_SHORT);
+                } else {
+                    toast = Toast.makeText(mContext, "List " + newText + " successfully created", Toast.LENGTH_SHORT);
+                }
+                toast.show();
+
+        }
         });
 
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -527,10 +597,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void createNewList() {
-        createListTitle(true);
-    }
-
     private void switchToLoadedList(MenuItem item) {
         if (!item.getTitle().equals(mWorkingList.getName())) {
             mFileController.saveList(mWorkingList); // save old list before rewriting table
@@ -541,16 +607,7 @@ public class MainActivity extends AppCompatActivity {
             displayTable(mWorkingList);
         }
     }
-//
-//    private void switchToPreviousList() { // should I set it straight to workinglist?
-//        mFileController.saveList(mWorkingList); // save old list before rewriting table
-//        if (mFileController.getAvailableFiles().contains(mPreviousList.getName())) {
-//            ArrayList<String> taskList = new ArrayList<>(mFileController.loadFile(mPreviousList.getName()));
-//            mWorkingList = fileToList(taskList, mPreviousList.getName());
-//        }
-//        mTitleText.setText(mWorkingList.getName());
-//        displayTable(mWorkingList);
-//    }
+
 
     private TaskList fileToList(ArrayList<String> inputList, String name) {
         TaskList newList = new TaskList(mContext, MainActivity.this);
