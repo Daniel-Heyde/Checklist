@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,7 +30,6 @@ import android.widget.Toast;
 
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
-import com.heyde.checklist.BuildConfig;
 import com.heyde.checklist.R;
 import com.heyde.checklist.model.FileController;
 import com.heyde.checklist.model.Task;
@@ -77,10 +75,18 @@ public class MainActivity extends AppCompatActivity {
     private boolean mDeleteMode = false;
     private boolean mInEditMode = false;
     boolean mInTutorial = false;
+    AlertDialog colorDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+        String selectedTheme = prefs.getString("Selected Theme", "Default");
+        int themeId = getThemeId(selectedTheme);
+        this.getTheme().applyStyle(themeId, true);
+
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         mContext = this;
@@ -97,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
 
         mFileController = new FileController(this);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         boolean previouslyLaunched = prefs.getBoolean(getString(R.string.Prev_Launch), false);
 
         if (!previouslyLaunched) {
@@ -111,6 +116,61 @@ public class MainActivity extends AppCompatActivity {
             displayList(0);
         }
 
+
+    }
+
+    public void setThemeFromDialog(View v){
+        String selection = v.getTag().toString();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        prefs.edit().putString("Selected Theme", selection).apply();
+        if (mWorkingList!=null) {
+            mFileController.saveList(mWorkingList);
+        }
+        colorDialog.dismiss();
+        finish();
+        startActivity(getIntent());
+    }
+
+
+    private void showThemeSelection(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select Theme");
+        builder.setView(R.layout.color_selection_dialog);
+        colorDialog = builder.show();
+    }
+
+    private int getThemeId(String selectedTheme) {
+        int themeId;
+        switch(selectedTheme){
+            case "red":
+                themeId = R.style.AppThemeRed;
+                break;
+            case "purple":
+                themeId = R.style.AppThemePurple;
+                break;
+            case "indigo":
+                themeId = R.style.AppThemeIndigo;
+                break;
+            case "lightblue":
+                themeId = R.style.AppThemeLightBlue;
+                break;
+            case "lightgreen":
+                themeId = R.style.AppThemeLightGreen;
+                break;
+            case "orange":
+                themeId = R.style.AppThemeOrange;
+                break;
+            case "brown":
+                themeId = R.style.AppThemeBrown;
+                break;
+            case "bluegray":
+                themeId = R.style.AppThemeBlueGray;
+                break;
+            default:
+                themeId = R.style.AppThemeDefault;
+                break;
+        }
+        return themeId;
 
     }
 
@@ -359,6 +419,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.review:
                 displayTutorial(false);
                 return true;
+            case R.id.themes:
+                showThemeSelection();
+                return true;
             case R.id.about:
                 showAboutDialog();
                 return true;
@@ -367,21 +430,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
     private void showAboutDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("About");
-        TextView text = new TextView(mContext);
-        String textString = String.format("\nThank you for using my app!\n\nEmail me suggestions and comments at dheydedev@gmail.com\n\nSimpleCheck version %s", BuildConfig.VERSION_NAME);
-        text.setText(textString);
-        text.setGravity(Gravity.CENTER_HORIZONTAL);
-        builder.setView(text);
-        builder.setPositiveButton("close", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.show();
+
+        colorDialog.show();
     }
 
     @Override
@@ -421,7 +474,7 @@ public class MainActivity extends AppCompatActivity {
                 String currentName = newText; // initializing to non null
                 if (!newlist) {
                     currentName = mWorkingList.getName();
-                    if (currentName.length() > 3 && currentName.charAt(newText.length()) == (')') && currentName.charAt(newText.length() - 3) == '(') {
+                    if (currentName.length() > 3 && currentName.charAt(newText.length()-1) == (')') && currentName.charAt(newText.length() - 3) == '(') {
                         currentNameStripped = currentName.substring(newText.lastIndexOf('('), newText.lastIndexOf(')'));
                     }
                 }

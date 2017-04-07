@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_margin="10dp"
+              android:gravity="center_vertical|center_horizontal"
+              android:orientation="vertical">
+
+    <android.support.v7.widget.GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:columnCount="4"
+        app:rowCount="2"
+        android:layout_marginTop="10dp">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/colorSelectRed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:clickable="true"
+            android:tag="red"
+            app:backgroundTint="@color/material_red_600"
+            app:fabSize="mini"
+            android:onClick="setThemeFromDialog"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/colorSelectPurple"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:clickable="true"
+            app:backgroundTint="@color/material_purple_700"
+            app:fabSize="mini"
+            android:onClick="setThemeFromDialog"
+            android:tag="purple"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/colorSelectIndigo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:clickable="true"
+            app:backgroundTint="@color/material_indigo_600"
+            app:fabSize="mini"
+            android:onClick="setThemeFromDialog"
+            android:tag="indigo"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/colorSelectLightBlue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:clickable="true"
+            app:backgroundTint="@color/material_lightBlue_600"
+            app:fabSize="mini"
+            android:onClick="setThemeFromDialog"
+            android:tag="lightblue"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/colorSelectLightGreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:clickable="true"
+            app:backgroundTint="@color/material_lightGreen_600"
+            app:fabSize="mini"
+            android:onClick="setThemeFromDialog"
+            android:tag="lightgreen"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/colorSelectOrange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:clickable="true"
+            app:backgroundTint="@color/material_orange_600"
+            app:fabSize="mini"
+            android:onClick="setThemeFromDialog"
+            android:tag="orange"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/colorSelectBrown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:clickable="true"
+            app:backgroundTint="@color/material_brown_600"
+            app:fabSize="mini"
+            android:onClick="setThemeFromDialog"
+            android:tag="brown"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/colorSelectBlueGray"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:clickable="true"
+            app:backgroundTint="@color/material_blueGray_600"
+            app:fabSize="mini"
+            android:onClick="setThemeFromDialog"
+            android:tag="bluegray"/>
+
+    </android.support.v7.widget.GridLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/colorSelectDefault"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:clickable="true"
+        android:tag="default"
+        app:backgroundTint="@color/colorPrimary"
+        app:fabSize="mini"
+        android:onClick="setThemeFromDialog"
+        android:layout_marginBottom="10dp"/>
+
+</LinearLayout>

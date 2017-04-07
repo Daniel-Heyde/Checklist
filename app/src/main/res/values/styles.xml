@@ -1,12 +1,70 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppThemeDefault" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <style name="AppThemeRed" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customizable themes -->
+        <item name="colorPrimary">@color/material_red_600</item>
+        <item name="colorPrimaryDark">@color/material_red_900</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppThemePurple" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customizable themes -->
+        <item name="colorPrimary">@color/material_purple_700</item>
+        <item name="colorPrimaryDark">@color/material_purple_900</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+
+    <style name="AppThemeIndigo" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customizable themes -->
+        <item name="colorPrimary">@color/material_indigo_600</item>
+        <item name="colorPrimaryDark">@color/material_indigo_900</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppThemeLightBlue" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customizable themes -->
+        <item name="colorPrimary">@color/material_lightBlue_600</item>
+        <item name="colorPrimaryDark">@color/material_lightBlue_900</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppThemeLightGreen" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customizable themes -->
+        <item name="colorPrimary">@color/material_lightGreen_600</item>
+        <item name="colorPrimaryDark">@color/material_lightGreen_900</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppThemeOrange" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customizable themes -->
+        <item name="colorPrimary">@color/material_orange_600</item>
+        <item name="colorPrimaryDark">@color/material_orange_900</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppThemeBrown" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customizable themes -->
+        <item name="colorPrimary">@color/material_brown_600</item>
+        <item name="colorPrimaryDark">@color/material_brown_900</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppThemeBlueGray" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customizable themes -->
+        <item name="colorPrimary">@color/material_blueGray_600</item>
+        <item name="colorPrimaryDark">@color/material_blueGray_900</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
 
     <style name="CustomShowcase" parent="ShowcaseView">
         <item name="sv_backgroundColor">#EE0E74FF</item>

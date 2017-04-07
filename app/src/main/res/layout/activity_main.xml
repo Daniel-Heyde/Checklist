@@ -97,7 +97,7 @@
         app:fabSize="normal"
         app:srcCompat="@drawable/task_add"
         android:id="@+id/addButton"
-        app:backgroundTint="@color/colorPrimary"
+        app:backgroundTint="?colorPrimary"
         android:accessibilityTraversalBefore="@+id/DraggableListLayout"
         app:elevation="3dp"
         android:layout_marginRight="22dp"

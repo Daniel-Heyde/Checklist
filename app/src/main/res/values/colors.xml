@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="colorPrimary">#00897b</color>
-    <color name="colorPrimaryDark">#004d40</color>
-    <color name="colorAccent">#616161</color>
+<resources><!-- using colors from https://www.materialui.co/colors -->
+    <color name="colorPrimary">#00897b</color><!--material 600-->
+    <color name="colorPrimaryDark">#004d40</color><!--material 900-->
+    <color name="colorAccent">#616161</color><!--to the right 9 colors, material 700-->
+
+    <color name="material_red_600">#e53935</color>
+    <color name="material_red_900">#b71c1c</color>
+    <color name="material_purple_700">#7b1fa2</color>
+    <color name="material_purple_900">#4a148c</color>
+    <color name="material_indigo_600">#3949ab</color>
+    <color name="material_indigo_900">#1a237e</color>
+    <color name="material_lightBlue_600">#039be5</color>
+    <color name="material_lightBlue_900">#01579b</color>
+    <color name="material_lightGreen_600">#7cb342</color>
+    <color name="material_lightGreen_900">#33691e</color>
+    <color name="material_orange_600">#f88c00</color>
+    <color name="material_orange_900">#e35100</color>
+    <color name="material_brown_600">#6d4c41</color>
+    <color name="material_brown_900">#3e2723</color>
+    <color name="material_blueGray_600">#546e7a</color>
+    <color name="material_blueGray_900">#263238 </color>
 
 </resources>

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- TODO This might not be a necessary file to have now that we've switched to a toolbar-->
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
