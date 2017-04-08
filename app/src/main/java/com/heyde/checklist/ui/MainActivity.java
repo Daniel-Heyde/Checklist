@@ -466,6 +466,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String newText = input.getText().toString();
+                if (!newlist && newText.equals(mWorkingList.getName())){
+                    Toast.makeText(mContext, "Name was not changed.", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                    return;  //leave function early
+                }
 
                 int count = 1;
                 boolean nameChanged = false;
@@ -479,11 +484,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 while (mFileController.getAvailableFiles().contains(newText)) {
-                    if (!newlist && currentNameStripped.equals(newTextBase)){
-                        newText = currentName;
-                        nameChanged = true;
-                        break;
-                    }
                     newText = newTextBase + " (" + count + ")";
                     count++;
                     nameChanged = true;
