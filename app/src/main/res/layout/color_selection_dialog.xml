@@ -15,7 +15,7 @@
         app:rowCount="2">
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/colorSelectRed"
+            android:id="@+id/colorSelect1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -26,7 +26,7 @@
             app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/colorSelectPurple"
+            android:id="@+id/colorSelect2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -37,7 +37,7 @@
             app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/colorSelectIndigo"
+            android:id="@+id/colorSelect3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -48,7 +48,7 @@
             app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/colorSelectLightBlue"
+            android:id="@+id/colorSelect4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -59,7 +59,7 @@
             app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/colorSelectLightGreen"
+            android:id="@+id/colorSelect5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -70,7 +70,7 @@
             app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/colorSelectOrange"
+            android:id="@+id/colorSelect6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -81,7 +81,7 @@
             app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/colorSelectBrown"
+            android:id="@+id/colorSelect7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -92,7 +92,7 @@
             app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/colorSelectBlueGray"
+            android:id="@+id/colorSelect8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -105,7 +105,7 @@
     </android.support.v7.widget.GridLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/colorSelectDefault"
+        android:id="@+id/colorSelect0"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
