@@ -15,89 +15,81 @@
         app:rowCount="2">
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/colorSelectRed"
+            android:id="@+id/colorSelect1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:clickable="true"
-            android:onClick="setThemeFromDialog"
             android:tag="red"
             app:backgroundTint="@color/material_red_600"
             app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/colorSelectPurple"
+            android:id="@+id/colorSelect2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:clickable="true"
-            android:onClick="setThemeFromDialog"
             android:tag="purple"
             app:backgroundTint="@color/material_purple_700"
             app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/colorSelectIndigo"
+            android:id="@+id/colorSelect3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:clickable="true"
-            android:onClick="setThemeFromDialog"
             android:tag="indigo"
             app:backgroundTint="@color/material_indigo_600"
             app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/colorSelectLightBlue"
+            android:id="@+id/colorSelect4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:clickable="true"
-            android:onClick="setThemeFromDialog"
             android:tag="lightblue"
             app:backgroundTint="@color/material_lightBlue_600"
             app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/colorSelectLightGreen"
+            android:id="@+id/colorSelect5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:clickable="true"
-            android:onClick="setThemeFromDialog"
             android:tag="lightgreen"
             app:backgroundTint="@color/material_lightGreen_600"
             app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/colorSelectOrange"
+            android:id="@+id/colorSelect6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:clickable="true"
-            android:onClick="setThemeFromDialog"
             android:tag="orange"
             app:backgroundTint="@color/material_orange_600"
             app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/colorSelectBrown"
+            android:id="@+id/colorSelect7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:clickable="true"
-            android:onClick="setThemeFromDialog"
             android:tag="brown"
             app:backgroundTint="@color/material_brown_600"
             app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/colorSelectBlueGray"
+            android:id="@+id/colorSelect8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:clickable="true"
-            android:onClick="setThemeFromDialog"
             android:tag="bluegray"
             app:backgroundTint="@color/material_blueGray_600"
             app:fabSize="mini"/>
@@ -105,13 +97,12 @@
     </android.support.v7.widget.GridLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/colorSelectDefault"
+        android:id="@+id/colorSelect0"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:layout_marginBottom="0dp"
         android:clickable="true"
-        android:onClick="setThemeFromDialog"
         android:paddingBottom="0dp"
         android:tag="default"
         app:backgroundTint="@color/colorPrimary"

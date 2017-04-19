@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,6 +31,7 @@ import android.widget.Toast;
 
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
+import com.heyde.checklist.BuildConfig;
 import com.heyde.checklist.R;
 import com.heyde.checklist.model.FileController;
 import com.heyde.checklist.model.Task;
@@ -45,6 +47,8 @@ import static com.heyde.checklist.R.id.toolbar;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    //TODO replace toasts with snackbars
 
     @BindView(R.id.activity_main)
     RelativeLayout mMainLayout;
@@ -137,6 +141,21 @@ public class MainActivity extends AppCompatActivity {
         builder.setTitle("Select Theme");
         builder.setView(R.layout.color_selection_dialog);
         colorDialog = builder.show();
+        int[] idList ={
+                R.id.colorSelect0, R.id.colorSelect1,
+                R.id.colorSelect2, R.id.colorSelect3,
+                R.id.colorSelect4, R.id.colorSelect5,
+                R.id.colorSelect6, R.id.colorSelect7,
+                R.id.colorSelect8
+        };
+        for (int id: idList){
+            colorDialog.findViewById(id).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    setThemeFromDialog(view);
+                }
+            });
+        }
     }
 
     private int getThemeId(String selectedTheme) {
@@ -433,8 +452,20 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void showAboutDialog() {
-
-        colorDialog.show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("About");
+        TextView text = new TextView(mContext);
+        String textString = String.format("\nThank you for using my app!\n\nEmail me suggestions and comments at dheydedev@gmail.com\n\nSimpleCheck version %s", BuildConfig.VERSION_NAME);
+        text.setText(textString);
+        text.setGravity(Gravity.CENTER_HORIZONTAL);
+        builder.setView(text);
+        builder.setPositiveButton("close", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
     }
 
     @Override
@@ -475,14 +506,7 @@ public class MainActivity extends AppCompatActivity {
                 int count = 1;
                 boolean nameChanged = false;
                 String newTextBase = newText;
-                String currentNameStripped = newText; // initializing to non null
-                String currentName = newText; // initializing to non null
-                if (!newlist) {
-                    currentName = mWorkingList.getName();
-                    if (currentName.length() > 3 && currentName.charAt(newText.length()-1) == (')') && currentName.charAt(newText.length() - 3) == '(') {
-                        currentNameStripped = currentName.substring(newText.lastIndexOf('('), newText.lastIndexOf(')'));
-                    }
-                }
+
                 while (mFileController.getAvailableFiles().contains(newText)) {
                     newText = newTextBase + " (" + count + ")";
                     count++;
@@ -507,7 +531,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Toast toast;
                 if (nameChanged) {
-                    toast = Toast.makeText(mContext, "This name already exists! Renaming to \"" + newText + "\".", Toast.LENGTH_LONG);
+                    toast = Toast.makeText(mContext, "This name already exists! Renaming to \"" + newText + "\".", Toast.LENGTH_LONG); //
                 } else if (!newlist) {
                     toast = Toast.makeText(mContext, "Name successfully changed to " + newText + ".", Toast.LENGTH_SHORT);
                 } else {
@@ -603,7 +627,6 @@ public class MainActivity extends AppCompatActivity {
             npe.printStackTrace();
         }
 
-//        alertDialog.getAppli
 
         alertDialog.show();
 
@@ -671,11 +694,7 @@ public class MainActivity extends AppCompatActivity {
             boolean isChecked;
 
             taskProps = taskText.split(":::");
-            if (taskProps[1].equals("false")) {
-                isChecked = false;
-            } else {
-                isChecked = true;
-            }
+                isChecked = Boolean.parseBoolean(taskProps[1]);
 
             taskName = taskProps[0].trim();
 
@@ -701,9 +720,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String listName = mWorkingList.getName();
-//                if (mFileController.getAvailableFiles().contains(mPreviousList.getName()) && !listName.equals(mPreviousList.getName())) { // switch to mPreviousList if prev list exists and is not mWorkingList
-//                    switchToPreviousList();
-//                } else { // if the last open list is no longer there
+
                 int num = 0;
                 if (mFileController.getAvailableFiles().size() > 1) { // if there are other lists available, pick the first one that is not the list to be deleted
                     while (mFileController.getAvailableFiles().get(num).equals(listName)) {
@@ -711,7 +728,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                     displayList(num);
                 }
-//                }
                 mFileController.deleteList(listName);
                 if (mFileController.getAvailableFiles().size() == 0) {
                     mWorkingList = null;
@@ -724,7 +740,7 @@ public class MainActivity extends AppCompatActivity {
                     toast = Toast.makeText(mContext, "Error while deleting list.", Toast.LENGTH_SHORT);
                 }
                 dialog.dismiss();
-                toast.show(); //perhaps later, a snackbar instead of toast
+                toast.show();
             }
         });
 
