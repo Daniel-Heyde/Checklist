@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         mContext = this;
         setSupportActionBar(mToolbar);
-
+        
         getSupportActionBar().setCustomView(R.layout.listname_actionbar);
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
