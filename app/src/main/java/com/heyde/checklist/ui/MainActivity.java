@@ -46,8 +46,8 @@ import butterknife.ButterKnife;
 import static com.heyde.checklist.R.id.toolbar;
 
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends AppCompatActivity
+{
     //TODO replace toasts with snackbars
 
     @BindView(R.id.activity_main)
@@ -68,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
     ScrollView mScrollView;
     @BindView(toolbar)
     Toolbar mToolbar;
-
+    boolean mInTutorial = false;
+    AlertDialog colorDialog;
     private TextView mTitleText;
     private boolean mTasksEditable = false;
     private TaskList mWorkingList;
@@ -78,11 +79,10 @@ public class MainActivity extends AppCompatActivity {
     private ImageView mDropDownCarrot;
     private boolean mDeleteMode = false;
     private boolean mInEditMode = false;
-    boolean mInTutorial = false;
-    AlertDialog colorDialog;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -108,25 +108,28 @@ public class MainActivity extends AppCompatActivity {
 
         boolean previouslyLaunched = prefs.getBoolean(getString(R.string.Prev_Launch), false);
 
-        if (!previouslyLaunched) {
+        if (!previouslyLaunched)
+        {
             SharedPreferences.Editor edit = prefs.edit();
             edit.putBoolean(getString(R.string.Prev_Launch), Boolean.TRUE);
             edit.apply();
 
             displayTutorial(true);
-        } else {
+        }
+        else
+        {
             setListeners();
             displayList(0);
         }
-
-
     }
 
-    public void setThemeFromDialog(View v){
+    public void setThemeFromDialog(View v)
+    {
         String selection = v.getTag().toString();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         prefs.edit().putString("Selected Theme", selection).apply();
-        if (mWorkingList!=null) {
+        if (mWorkingList != null)
+        {
             mFileController.saveList(mWorkingList);
         }
         colorDialog.dismiss();
@@ -135,31 +138,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void showThemeSelection(){
+    private void showThemeSelection()
+    {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select Theme");
         builder.setView(R.layout.color_selection_dialog);
         colorDialog = builder.show();
-        int[] idList ={
+        int[] idList = {
                 R.id.colorSelect0, R.id.colorSelect1,
                 R.id.colorSelect2, R.id.colorSelect3,
                 R.id.colorSelect4, R.id.colorSelect5,
                 R.id.colorSelect6, R.id.colorSelect7,
                 R.id.colorSelect8
         };
-        for (int id: idList){
-            colorDialog.findViewById(id).setOnClickListener(new View.OnClickListener() {
+        for (int id : idList)
+        {
+            colorDialog.findViewById(id).setOnClickListener(new View.OnClickListener()
+            {
                 @Override
-                public void onClick(View view) {
+                public void onClick(View view)
+                {
                     setThemeFromDialog(view);
                 }
             });
         }
     }
 
-    private int getThemeId(String selectedTheme) {
+    private int getThemeId(String selectedTheme)
+    {
         int themeId;
-        switch(selectedTheme){
+        switch (selectedTheme)
+        {
             case "red":
                 themeId = R.style.AppThemeRed;
                 break;
@@ -189,13 +198,14 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         return themeId;
-
     }
 
-    private void displayTutorial(final boolean firstLaunch) {
+    private void displayTutorial(final boolean firstLaunch)
+    {
         mInTutorial = true;
 
-        if (!firstLaunch && mWorkingList != null){ // will run if they are reviewing tutorial and they have a list open
+        if (!firstLaunch && mWorkingList != null)
+        { // will run if they are reviewing tutorial and they have a list open
             mFileController.saveList(mWorkingList);
             mPreviousList = mWorkingList;
         }
@@ -211,7 +221,8 @@ public class MainActivity extends AppCompatActivity {
         displayTable(mWorkingList);
         final LinearLayout lLayout = (LinearLayout) mDragLinearLayout.getChildAt(0);
 
-        if (firstLaunch) {
+        if (firstLaunch)
+        {
             mToolbar.inflateMenu(R.menu.action_button);
         }
         final ShowcaseView showcase = new ShowcaseView.Builder(this)
@@ -224,19 +235,21 @@ public class MainActivity extends AppCompatActivity {
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        layoutParams.setMargins(0,0,120,300);
+        layoutParams.setMargins(0, 0, 120, 300);
 
         showcase.setButtonPosition(layoutParams);
         showcase.setStyle(R.style.CustomShowcase);
 
-
-        showcase.overrideButtonClick(new View.OnClickListener() {
+        showcase.overrideButtonClick(new View.OnClickListener()
+        {
             int count = 0;
 
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 count++;
-                switch (count) {
+                switch (count)
+                {
                     case 1:
                         showcase.setTarget(new ViewTarget(mAddButton));
                         showcase.setContentTitle("Add a Task");
@@ -268,9 +281,12 @@ public class MainActivity extends AppCompatActivity {
                         mWorkingList = null;
                         setListeners();
                         mInTutorial = false;
-                        if (!firstLaunch && mPreviousList!=null) { // if they review the tutorial with no list open
+                        if (!firstLaunch && mPreviousList != null)
+                        { // if they review the tutorial with no list open
                             displayList(mFileController.getAvailableFiles().indexOf(mPreviousList.getName()));
-                        } else{
+                        }
+                        else
+                        {
                             displayList(0);
                         }
                         break;
@@ -280,50 +296,81 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void setListeners() {
-        mRefreshButton.setOnClickListener(new View.OnClickListener() {
+    private void setListeners()
+    {
+        SetRefreshListener();
+        mAddButton.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
-                if (!mDeleteMode) {
+            public void onClick(View v)
+            {
+                addTask(true);
+            }
+        });
+        SetTitleTextListeners();
+        SetDropDownListeners();
+    }
+
+    private void SetRefreshListener()
+    {
+        mRefreshButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if (!mDeleteMode)
+                {
                     mWorkingList.refreshList();
                     mFileController.saveList(mWorkingList);
-                } else {
+                }
+                else
+                {
                     mWorkingList.deleteSelected();
                     displayTable(mWorkingList);
                     mFileController.saveList(mWorkingList);
                 }
             }
         });
-        mAddButton.setOnClickListener(new View.OnClickListener() {
+    }
+
+    private void SetTitleTextListeners()
+    {
+        mTitleText.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
-                addTask(true);
-            }
-        });
-        mTitleText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mWorkingList != null) {
-                    if (mInEditMode) {
+            public void onClick(View v)
+            {
+                if (mWorkingList != null)
+                {
+                    if (mInEditMode)
+                    {
                         createListTitle(false);
-                    } else {
+                    }
+                    else
+                    {
                         PopupMenu popup = new PopupMenu(mContext, mTitleText);
                         popup.getMenu().add(mWorkingList.getName());
-                        for (String filename : mFileController.getAvailableFiles()) {
-                            if (!filename.equals(mWorkingList.getName())) {
+                        for (String filename : mFileController.getAvailableFiles())
+                        {
+                            if (!filename.equals(mWorkingList.getName()))
+                            {
                                 popup.getMenu().add(filename);
                             }
                         }
-                        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener()
+                        {
                             @Override
-                            public boolean onMenuItemClick(MenuItem item) {
+                            public boolean onMenuItemClick(MenuItem item)
+                            {
                                 switchToLoadedList(item);
                                 return true;
                             }
                         });
-                        try {
+                        try
+                        {
                             popup.show();
-                        } catch (Exception e) {
+                        } catch (Exception e)
+                        {
                             e.printStackTrace();
 
                         }
@@ -331,48 +378,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        mTitleText.setOnLongClickListener(new View.OnLongClickListener() {
+        mTitleText.setOnLongClickListener(new View.OnLongClickListener()
+        {
             @Override
-            public boolean onLongClick(View v) {
-                if (!mFileController.getAvailableFiles().isEmpty()) {
-                    titleOptions();
-                }
-                return true;
-            }
-        });
-        mDropDownCarrot.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mTasksEditable) {
-                    createListTitle(false);
-                } else {
-                    PopupMenu popup = new PopupMenu(mContext, mTitleText);
-                    popup.getMenu().add(mWorkingList.getName());
-                    for (String filename : mFileController.getAvailableFiles()) {
-                        if (!filename.equals(mWorkingList.getName())) {
-                            popup.getMenu().add(filename);
-                        }
-                    }
-                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            switchToLoadedList(item);
-                            return false;
-                        }
-                    });
-                    try {
-                        popup.show();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-
-                    }
-                }
-            }
-        });
-        mDropDownCarrot.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (!mFileController.getAvailableFiles().isEmpty()) {
+            public boolean onLongClick(View v)
+            {
+                if (!mFileController.getAvailableFiles().isEmpty())
+                {
                     titleOptions();
                 }
                 return true;
@@ -380,15 +392,77 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void titleOptions() {
+    private void SetDropDownListeners()
+    {
+        mDropDownCarrot.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if (mTasksEditable)
+                {
+                    createListTitle(false);
+                }
+                else
+                {
+                    PopupMenu popup = new PopupMenu(mContext, mTitleText);
+                    popup.getMenu().add(mWorkingList.getName());
+                    for (String filename : mFileController.getAvailableFiles())
+                    {
+                        if (!filename.equals(mWorkingList.getName()))
+                        {
+                            popup.getMenu().add(filename);
+                        }
+                    }
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener()
+                    {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item)
+                        {
+                            switchToLoadedList(item);
+                            return false;
+                        }
+                    });
+                    try
+                    {
+                        popup.show();
+                    } catch (Exception e)
+                    {
+                        e.printStackTrace();
+
+                    }
+                }
+            }
+        });
+        mDropDownCarrot.setOnLongClickListener(new View.OnLongClickListener()
+        {
+            @Override
+            public boolean onLongClick(View v)
+            {
+                if (!mFileController.getAvailableFiles().isEmpty())
+                {
+                    titleOptions();
+                }
+                return true;
+            }
+        });
+    }
+
+    private void titleOptions()
+    {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         String[] options = new String[]{"Rename List", "Delete List"};
         builder.setTitle("List Options");
-        builder.setItems(options, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int choice) {
-                if (choice == 0) { //rename list
+        builder.setItems(options, new DialogInterface.OnClickListener()
+        {
+            public void onClick(DialogInterface dialog, int choice)
+            {
+                if (choice == 0)
+                { //rename list
                     createListTitle(false);
-                } else { // delete list
+                }
+                else
+                { // delete list
                     confirmDelete();
                 }
             }
@@ -397,15 +471,19 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
-    private void setNoListsVisible(boolean visible) {
-        if (visible) {
+    private void setNoListsVisible(boolean visible)
+    {
+        if (visible)
+        {
             mDragLinearLayout.removeAllViews();
             mTitleText.setText(R.string.app_name);
             mNoLists.setVisibility(View.VISIBLE);
             mRefreshButton.setVisibility(View.INVISIBLE);
             mAddButton.setVisibility(View.INVISIBLE);
             mDropDownCarrot.setVisibility(View.INVISIBLE);
-        } else {
+        }
+        else
+        {
             mNoLists.setVisibility(View.INVISIBLE);
             mRefreshButton.setVisibility(View.VISIBLE);
             mAddButton.setVisibility(View.VISIBLE);
@@ -414,22 +492,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
+    protected void onPause()
+    {
         super.onPause();
-        if (!mFileController.getAvailableFiles().isEmpty()) {
+        if (!mFileController.getAvailableFiles().isEmpty())
+        {
             mFileController.saveList(mWorkingList);
         }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
 
             case R.id.add_new_list:
-                if (!mInTutorial) {
-                    if (mInEditMode) {
+                if (!mInTutorial)
+                {
+                    if (mInEditMode)
+                    {
                         confirmDelete();
-                    } else {
+                    }
+                    else
+                    {
                         createListTitle(true);
                     }
                 }
@@ -449,8 +535,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-    private void showAboutDialog() {
+    private void showAboutDialog()
+    {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("About");
         TextView text = new TextView(mContext);
@@ -458,9 +544,11 @@ public class MainActivity extends AppCompatActivity {
         text.setText(textString);
         text.setGravity(Gravity.CENTER_HORIZONTAL);
         builder.setView(text);
-        builder.setPositiveButton("close", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("close", new DialogInterface.OnClickListener()
+        {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which)
+            {
                 dialog.dismiss();
             }
         });
@@ -468,20 +556,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.action_button, menu);
         return true;
     }
 
-    private void createListTitle(final boolean newlist) {
+    private void createListTitle(final boolean newlist)
+    {
 
         // http://stackoverflow.com/questions/10903754/input-text-dialog-android
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final EditText input = new EditText(this);
-        if (newlist) {
+        if (newlist)
+        {
             builder.setTitle("Add a New List");
-        } else {
+        }
+        else
+        {
             builder.setTitle("Rename List");
             input.setText(mWorkingList.getName());
         }
@@ -492,70 +585,15 @@ public class MainActivity extends AppCompatActivity {
         builder.setView(input); // takes builder, tells it to show the edittext that we're now editing
 
 
-        builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String newText = input.getText().toString();
-                if (!newlist && newText.equals(mWorkingList.getName())){
-                    Toast.makeText(mContext, "Name was not changed.", Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
-                    return;  //leave function early
-                }
-
-                int count = 1;
-                boolean nameChanged = false;
-                String newTextBase = newText;
-
-                while (mFileController.getAvailableFiles().contains(newText)) {
-                    newText = newTextBase + " (" + count + ")";
-                    count++;
-                    nameChanged = true;
-                }
-
-                if (newlist) { // setting a name for a new list
-                    mWorkingList = new TaskList(mContext, MainActivity.this);
-                    mFileController.saveList(mWorkingList);
-                    mWorkingList.setName(newText);
-                    mTitleText.setText(mWorkingList.getName());
-                    mFileController.saveList(mWorkingList);
-                    setNoListsVisible(false);
-                    displayTable(mWorkingList);
-                } else { // changing the name of an existing list
-                    String prevName = mWorkingList.getName();
-                    mWorkingList.setName(newText);
-                    mFileController.saveList(mWorkingList);
-                    mFileController.deleteList(prevName);
-                    mTitleText.setText(mWorkingList.getName());
-                }
-
-                Toast toast;
-                if (nameChanged) {
-                    toast = Toast.makeText(mContext, "This name already exists! Renaming to \"" + newText + "\".", Toast.LENGTH_LONG); //
-                } else if (!newlist) {
-                    toast = Toast.makeText(mContext, "Name successfully changed to " + newText + ".", Toast.LENGTH_SHORT);
-                } else {
-                    toast = Toast.makeText(mContext, "List " + newText + " successfully created", Toast.LENGTH_SHORT);
-                }
-                toast.show();
-
-        }
-        });
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();// closes pop up dialog without input
-                if (!mFileController.getAvailableFiles().isEmpty()) {
-                    displayTable(mWorkingList);
-                }
-            }
-        });
+        SetCreateTitleButtons(newlist, builder, input);
 
         AlertDialog alertDialog = builder.create();
 
-        try {
+        try
+        {
             alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        } catch (NullPointerException npe) {
+        } catch (NullPointerException npe)
+        {
             npe.printStackTrace();
         }
 
@@ -568,19 +606,100 @@ public class MainActivity extends AppCompatActivity {
         negButton.setTextColor(Color.RED);
     }
 
-    public void addTask(final boolean newTask) {
+    private void SetCreateTitleButtons(final boolean newlist, AlertDialog.Builder builder, final EditText input)
+    {
+        builder.setPositiveButton("Done", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                String newText = input.getText().toString();
+                if (!newlist && newText.equals(mWorkingList.getName()))
+                {
+                    Toast.makeText(mContext, "Name was not changed.", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                    return;  //leave function early
+                }
+
+                int count = 1;
+                boolean nameChanged = false;
+                String newTextBase = newText;
+
+                while (mFileController.getAvailableFiles().contains(newText))
+                {
+                    newText = newTextBase + " (" + count + ")";
+                    count++;
+                    nameChanged = true;
+                }
+
+                if (newlist)
+                { // setting a name for a new list
+                    mWorkingList = new TaskList(mContext, MainActivity.this);
+                    mFileController.saveList(mWorkingList);
+                    mWorkingList.setName(newText);
+                    mTitleText.setText(mWorkingList.getName());
+                    mFileController.saveList(mWorkingList);
+                    setNoListsVisible(false);
+                    displayTable(mWorkingList);
+                }
+                else
+                { // changing the name of an existing list
+                    String prevName = mWorkingList.getName();
+                    mWorkingList.setName(newText);
+                    mFileController.saveList(mWorkingList);
+                    mFileController.deleteList(prevName);
+                    mTitleText.setText(mWorkingList.getName());
+                }
+
+                Toast toast;
+                if (nameChanged)
+                {
+                    toast = Toast.makeText(mContext, "This name already exists! Renaming to \"" + newText + "\".", Toast.LENGTH_LONG); //
+                }
+                else if (!newlist)
+                {
+                    toast = Toast.makeText(mContext, "Name successfully changed to " + newText + ".", Toast.LENGTH_SHORT);
+                }
+                else
+                {
+                    toast = Toast.makeText(mContext, "List " + newText + " successfully created", Toast.LENGTH_SHORT);
+                }
+                toast.show();
+
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                dialog.cancel();// closes pop up dialog without input
+                if (!mFileController.getAvailableFiles().isEmpty())
+                {
+                    displayTable(mWorkingList);
+                }
+            }
+        });
+    }
+
+    public void addTask(final boolean newTask)
+    {
         addTask(newTask, null);
     }
 
 
-    public void addTask(final boolean newTask, final Task oldTask) {
-
+    public void addTask(final boolean newTask, final Task oldTask)
+    {
         // http://stackoverflow.com/questions/10903754/input-text-dialog-android
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final EditText input = new EditText(mContext);
-        if (newTask) {
+        if (newTask)
+        {
             builder.setTitle("Add a New Task");
-        } else {
+        }
+        else
+        {
             builder.setTitle("Edit Task");
             input.setText(oldTask.getTaskText());// old task text here
         }
@@ -592,15 +711,43 @@ public class MainActivity extends AppCompatActivity {
         builder.setView(input); // takes builder, tells it to show the edittext that we're now editing
 
 
-        builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+        SetAddTaskButtons(newTask, oldTask, builder, input);
+
+        AlertDialog alertDialog = builder.create();
+
+        try
+        {
+            alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        } catch (NullPointerException npe)
+        {
+            npe.printStackTrace();
+        }
+
+        alertDialog.show();
+
+        Button posButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        posButton.setTextColor(Color.GREEN);
+
+        Button negButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+        negButton.setTextColor(Color.RED);
+    }
+
+    private void SetAddTaskButtons(final boolean newTask, final Task oldTask, AlertDialog.Builder builder, final EditText input)
+    {
+        builder.setPositiveButton("Done", new DialogInterface.OnClickListener()
+        {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (newTask) {
+            public void onClick(DialogInterface dialog, int which)
+            {
+                if (newTask)
+                {
                     String newText = input.getText().toString();
                     Task newTask = new Task(newText, false, mContext, mReferenceText, mReferenceButton);
                     mWorkingList.addTask(newTask);
                     mWorkingList.makeNewLine(newTask);
-                } else {
+                }
+                else
+                {
                     oldTask.setTaskText(input.getText().toString());
                     switchToDelete();
                     mWorkingList.refreshRows();
@@ -610,70 +757,63 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which)
+            {
                 dialog.cancel();// closes pop up dialog without input
                 switchToDelete();
             }
         });
-
-        AlertDialog alertDialog = builder.create();
-
-        try {
-            alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        } catch (NullPointerException npe) {
-            npe.printStackTrace();
-        }
-
-
-        alertDialog.show();
-
-        Button posButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        posButton.setTextColor(Color.GREEN);
-
-        Button negButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-        negButton.setTextColor(Color.RED);
-
-
     }
 
-    public void displayTable(TaskList taskList) { // used to display tasks from current table
+    public void displayTable(TaskList taskList)
+    { // used to display tasks from current table
         mDragLinearLayout.removeAllViews();
-        for (LinearLayout layout : taskList.getLayoutRows()) {
+        for (LinearLayout layout : taskList.getLayoutRows())
+        {
             mDragLinearLayout.addView(layout);
         }
 
-        for (int i = 0; i < mDragLinearLayout.getChildCount(); i++) {
+        for (int i = 0; i < mDragLinearLayout.getChildCount(); i++)
+        {
             LinearLayout parent = (LinearLayout) mDragLinearLayout.getChildAt(i);
             View child = parent.getChildAt(0);
             mDragLinearLayout.setViewDraggable(parent, child);
         }
 
-        mDragLinearLayout.setOnViewSwapListener(new DragLinearLayout.OnViewSwapListener() {
+        mDragLinearLayout.setOnViewSwapListener(new DragLinearLayout.OnViewSwapListener()
+        {
             @Override
-            public void onSwap(View firstView, int firstPosition, View secondView, int secondPosition) {
+            public void onSwap(View firstView, int firstPosition, View secondView, int secondPosition)
+            {
                 mWorkingList.reorderList(firstPosition, secondPosition);
             }
         });
-
     }
 
-    private void displayList(int pos) { // used to call a different list or to call the initial list
-        if (mFileController.getAvailableFiles().size() > 0) {
+    private void displayList(int pos)
+    { // used to call a different list or to call the initial list
+        if (mFileController.getAvailableFiles().size() > 0)
+        {
             setNoListsVisible(false);
             String initListName = mFileController.getAvailableFiles().get(pos);
             ArrayList<String> initListStrings = new ArrayList<>(mFileController.loadFile(initListName));
             mWorkingList = fileToList(initListStrings, initListName);
             mTitleText.setText(mWorkingList.getName());
             displayTable(mWorkingList);
-        } else {
+        }
+        else
+        {
             setNoListsVisible(true);
         }
     }
 
-    private void switchToLoadedList(MenuItem item) {
-        if (!item.getTitle().equals(mWorkingList.getName())) {
+    private void switchToLoadedList(MenuItem item)
+    {
+        if (!item.getTitle().equals(mWorkingList.getName()))
+        {
             mFileController.saveList(mWorkingList); // save old list before rewriting table
             String itemName = item.getTitle().toString();
             ArrayList<String> taskList = new ArrayList<>(mFileController.loadFile(itemName));
@@ -684,16 +824,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private TaskList fileToList(ArrayList<String> inputList, String name) {
+    private TaskList fileToList(ArrayList<String> inputList, String name)
+    {
         TaskList newList = new TaskList(mContext, MainActivity.this);
 
-        for (String taskText : inputList) {
+        for (String taskText : inputList)
+        {
             String[] taskProps;
             String taskName;
             boolean isChecked;
 
             taskProps = taskText.split(":::");
-                isChecked = Boolean.parseBoolean(taskProps[1]);
+            isChecked = Boolean.parseBoolean(taskProps[1]);
 
             taskName = taskProps[0].trim();
 
@@ -708,47 +850,15 @@ public class MainActivity extends AppCompatActivity {
         return newList;
     }
 
-    private void confirmDelete() {
+    private void confirmDelete()
+    {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setTitle("CONFIRM");
         builder.setMessage("Are you sure you want to delete " + "\"" + mWorkingList.getName() + "\"?");
 
-        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String listName = mWorkingList.getName();
-
-                int num = 0;
-                if (mFileController.getAvailableFiles().size() > 1) { // if there are other lists available, pick the first one that is not the list to be deleted
-                    while (mFileController.getAvailableFiles().get(num).equals(listName)) {
-                        num++;
-                    }
-                    displayList(num);
-                }
-                mFileController.deleteList(listName);
-                if (mFileController.getAvailableFiles().size() == 0) {
-                    mWorkingList = null;
-                    setNoListsVisible(true);
-                }
-                Toast toast;
-                if (!mFileController.getAvailableFiles().contains(listName)) {
-                    toast = Toast.makeText(mContext, "\"" + listName + "\"" + " successfully deleted", Toast.LENGTH_SHORT);
-                } else {
-                    toast = Toast.makeText(mContext, "Error while deleting list.", Toast.LENGTH_SHORT);
-                }
-                dialog.dismiss();
-                toast.show();
-            }
-        });
-
-        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        SetConfirmDeleteButtons(builder);
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
@@ -758,32 +868,84 @@ public class MainActivity extends AppCompatActivity {
 
         Button negButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
         negButton.setTextColor(Color.RED);
-
-
     }
 
-    public void switchToDelete() {
-        if (mWorkingList != null) { // will be null if there is no working list, ie. all lists are deleted or app has been opened for first time
+    private void SetConfirmDeleteButtons(AlertDialog.Builder builder)
+    {
+        builder.setPositiveButton("YES", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                String listName = mWorkingList.getName();
+
+                int num = 0;
+                if (mFileController.getAvailableFiles().size() > 1)
+                { // if there are other lists available, pick the first one that is not the list to be deleted
+                    while (mFileController.getAvailableFiles().get(num).equals(listName))
+                    {
+                        num++;
+                    }
+                    displayList(num);
+                }
+                mFileController.deleteList(listName);
+                if (mFileController.getAvailableFiles().size() == 0)
+                {
+                    mWorkingList = null;
+                    setNoListsVisible(true);
+                }
+                Toast toast;
+                if (!mFileController.getAvailableFiles().contains(listName))
+                {
+                    toast = Toast.makeText(mContext, "\"" + listName + "\"" + " successfully deleted", Toast.LENGTH_SHORT);
+                }
+                else
+                {
+                    toast = Toast.makeText(mContext, "Error while deleting list.", Toast.LENGTH_SHORT);
+                }
+                dialog.dismiss();
+                toast.show();
+            }
+        });
+
+        builder.setNegativeButton("NO", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                dialog.dismiss();
+            }
+        });
+    }
+
+    public void switchToDelete()
+    {
+        if (mWorkingList != null)
+        { // will be null if there is no working list, ie. all lists are deleted or app has been opened for first time
             int deletableTasks = mWorkingList.getDeleteListSize();
-            if (deletableTasks > 0) {
-                if (deletableTasks == 1) {
+            if (deletableTasks > 0)
+            {
+                if (deletableTasks == 1)
+                {
                     mRefreshButton.setText("Delete " + deletableTasks + " item");
 
-                } else {
+                }
+                else
+                {
                     mRefreshButton.setText("Delete " + deletableTasks + " items");
                 }
 
                 mAddButton.setVisibility(View.INVISIBLE);
                 mDeleteMode = true;
-            } else {
+            }
+            else
+            {
                 mDeleteMode = false;
                 mAddButton.setVisibility(View.VISIBLE);
                 mRefreshButton.setText(R.string.Clear_Progress);
             }
         }
     }
-
-
 }
 
 

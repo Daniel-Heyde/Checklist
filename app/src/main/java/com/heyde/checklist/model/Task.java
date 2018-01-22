@@ -17,7 +17,8 @@ import static android.R.color.transparent;
  * Created by Daniel on 10/8/2016.
  */
 
-public class Task {
+public class Task
+{
     private String mTaskText;
     private boolean mIsChecked;
     private Context mContext;
@@ -25,7 +26,8 @@ public class Task {
     private ImageView mCheckBox;
     private boolean mIsEditable;
 
-    public Task(String taskText, boolean isChecked, Context context, TextView referenceTextView, ImageButton referenceImageButton) {
+    public Task(String taskText, boolean isChecked, Context context, TextView referenceTextView, ImageButton referenceImageButton)
+    {
         mTaskText = taskText;
         mIsChecked = isChecked;
         mContext = context;
@@ -33,48 +35,60 @@ public class Task {
         createImageButton(referenceImageButton);
     }
 
-    public TextView getTextView() {
+    public TextView getTextView()
+    {
         return mTextView;
     }
 
-    public String taskToString(){
-        return(mTaskText+ ":::" + mIsChecked);
+    public String taskToString()
+    {
+        return (mTaskText + ":::" + mIsChecked);
     }
 
-    public boolean isEditable() {
+    public boolean isEditable()
+    {
         return mIsEditable;
     }
 
-    private void createImageButton(ImageButton referenceImageButton) {
+    private void createImageButton(ImageButton referenceImageButton)
+    {
         final ImageView newCheckBox = new ImageButton(mContext);
         newCheckBox.setLayoutParams(referenceImageButton.getLayoutParams());
-        newCheckBox.setPadding(0,0,15,0);
+        newCheckBox.setPadding(0, 0, 15, 0);
         Drawable checkbox;
-            if (!isChecked()) {
-                checkbox = ContextCompat.getDrawable(mContext, R.drawable.checkbox_off);
-            } else {
-                checkbox = ContextCompat.getDrawable(mContext, R.drawable.checkbox_on);
-            }
+        if (!isChecked())
+        {
+            checkbox = ContextCompat.getDrawable(mContext, R.drawable.checkbox_off);
+        }
+        else
+        {
+            checkbox = ContextCompat.getDrawable(mContext, R.drawable.checkbox_on);
+        }
         newCheckBox.setImageDrawable(checkbox);
         newCheckBox.setBackgroundColor(ContextCompat.getColor(mContext, transparent));
 
         mCheckBox = newCheckBox;
     }
 
-    public void toggleCheckButton() {
+    public void toggleCheckButton()
+    {
 
         Drawable checkbox;
-        if (!mIsChecked) {
+        if (!mIsChecked)
+        {
             checkbox = ContextCompat.getDrawable(mContext, R.drawable.checkbox_on);
             mIsChecked = true;
-        } else {
+        }
+        else
+        {
             checkbox = ContextCompat.getDrawable(mContext, R.drawable.checkbox_off);
             mIsChecked = false;
         }
         mCheckBox.setImageDrawable(checkbox);
     }
 
-    private void createTextView(TextView referenceTextView) {
+    private void createTextView(TextView referenceTextView)
+    {
 
         TextView newTaskText = new TextView(mContext);
         newTaskText.setMaxWidth(100);
@@ -85,12 +99,16 @@ public class Task {
 
     }
 
-    public void restoreCheckButton() {
+    public void restoreCheckButton()
+    {
 
         Drawable checkbox;
-        if (!mIsChecked) {
+        if (!mIsChecked)
+        {
             checkbox = ContextCompat.getDrawable(mContext, R.drawable.checkbox_off);
-        } else {
+        }
+        else
+        {
             checkbox = ContextCompat.getDrawable(mContext, R.drawable.checkbox_on);
         }
         mIsEditable = false;
@@ -99,26 +117,31 @@ public class Task {
     }
 
 
-    public void switchToEdit() {
+    public void switchToEdit()
+    {
         mIsEditable = true;
         mCheckBox.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.edit_task));
         mTextView.setTextColor(Color.WHITE);
     }
 
-    public ImageView getCheckBox() {
+    public ImageView getCheckBox()
+    {
         return mCheckBox;
     }
 
 
-    public String getTaskText() {
+    public String getTaskText()
+    {
         return mTaskText;
     }
 
-    public void setTaskText(String taskText) { // might be used later for an edit task?
+    public void setTaskText(String taskText)
+    { // might be used later for an edit task?
         mTaskText = taskText;
     }
 
-    public boolean isChecked() {
+    public boolean isChecked()
+    {
         return mIsChecked;
     }
 }

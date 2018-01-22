@@ -1,7 +1,6 @@
 package com.heyde.checklist.model;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,49 +14,61 @@ import java.util.List;
  * Created by Daniel on 10/25/2016.
  */
 
-public class FileController {
+public class FileController
+{
 
     private Context mContext;
     private BufferedReader mBufferedReader;
 
-    public FileController(Context context) {
+    public FileController(Context context)
+    {
         mContext = context;
     }
 
-    public void saveList(TaskList list) {
+    public void saveList(TaskList list)
+    {
 
         SaveFile saveFile = new SaveFile(mContext);
         saveFile.execute(list);
     }
 
-    public List<String> loadFile(String fileName) {
+    public List<String> loadFile(String fileName)
+    {
 
         File file = new File(mContext.getFilesDir() + File.separator + "lists" + File.separator + fileName + ".txt");
         List list = new ArrayList();
-        try {
+        try
+        {
             mBufferedReader = new BufferedReader(new FileReader(file));
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e)
+        {
             e.printStackTrace();
         }
-        try {
+        try
+        {
             String line;
-            while ((line = mBufferedReader.readLine()) != null) {
+            while ((line = mBufferedReader.readLine()) != null)
+            {
                 list.add(line);
             }
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             e.printStackTrace();
         }
         return list;
     }
 
 
-    public List<String> getAvailableFiles() {
+    public List<String> getAvailableFiles()
+    {
         File dir = new File(mContext.getFilesDir() + File.separator + "lists");
         dir.mkdirs();
         File[] files = dir.listFiles();
         List<String> availableFiles = new ArrayList<>();
-        if (files.length != 0) {
-            for (File file : files) {
+        if (files.length != 0)
+        {
+            for (File file : files)
+            {
                 String filename = file.getName();
                 filename = filename.substring(0, filename.length() - 4);
                 availableFiles.add(filename);
@@ -66,7 +77,8 @@ public class FileController {
         return availableFiles;
     }
 
-    public void deleteList(String filename) {
+    public void deleteList(String filename)
+    {
         File forDelete = new File(mContext.getFilesDir() + File.separator + "lists" + File.separator + filename + ".txt");
         forDelete.delete();
     }
